@@ -11,7 +11,7 @@ public class Ergasia {
         CommonTokenStream tokens = new CommonTokenStream( lexer );
         ErgasiaParser parser = new ErgasiaParser( tokens );
 
-        ParseTree tree = parser.prog();
+        ParseTree tree = parser.program();
         /*
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk( new ErgasiaWalker(), tree );
