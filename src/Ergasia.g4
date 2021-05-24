@@ -135,5 +135,5 @@ formal_parameters : type vars COMMA formal_parameters | type vars;
 /* Lexical */
 
 
-
+ID : ('"'[a-zA-Z][a-zA-Z'"'0-9]*'"')|('"'[a-zA-Z]'_'[a-zA-Z'"'0-9]*'"''_')|('"'[a-zA-Z][a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_''"')|('"'[a-zA-Z]'_'[a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_''"');
 
