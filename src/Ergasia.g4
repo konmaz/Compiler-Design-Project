@@ -1,10 +1,10 @@
 grammar Ergasia;
 
-program : body END subprograms;
+program : body END subprograms ;
 
-body : declarations statements;
+body : declarations statements ;
 
-declarations : declarations type vars | declarations COMMON cblock_list | declarations DATA vals | /* epsilon */ ;
+declarations : declarations type vars  | declarations COMMON cblock_list | declarations DATA vals | /* epsilon */ ;
 
 type : INTEGER | REAL | COMPLEX | LOGICAL | CHARACTER | STRING;
 
@@ -86,6 +86,7 @@ expression : expression OROP expression
 | listexpression;
 
 
+
 listexpression : LBRACK expressions RBRACK
 | LBRACK RBRACK;
 
@@ -138,6 +139,7 @@ formal_parameters : type vars COMMA formal_parameters | type vars;
 /* Lexical */
 
 DOT: '.';
+
 /* lexeis-kleidia */
 FUNCTION :'FUNCTION'|'function';
 SUBROUTINE :'SUBROUTINE'|'subroutine';
@@ -169,5 +171,26 @@ RETURN:'RETURN'|'return';
 
 ID :('"'[a-zA-Z][a-zA-Z'"'0-9]*'"')|('"'[a-zA-Z]'_'[a-zA-Z'"'0-9]*'"''_')|('"'[a-zA-Z][a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_''"')|('"'[a-zA-Z]'_'[a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_''"');
 
-
+AUTAKI:'\'';
 LCONST : (DOT'TRUE'DOT)|(DOT'FALSE'DOT) ;
+CCONST:AUTAKI.*AUTAKI;
+
+/* Telestes */
+OROP:'.OR.';
+ANDOP:'.AND.';
+NOTOP:'.NOT';
+RELOP: '.GT.'|'.GE.'|'.LT.'|'.LE.'|'.EQ.'|'.NE.';
+ADDOP:'+'|'-';
+MULOP:'*';
+DIVOP:'/';
+POWEROP:'**';
+
+/* Alles lektikes monades */
+
+LPAREN:'(';
+RPAREN:')';
+COMMA:',';
+ASSIGN:'=';
+COLON:':';
+LBRACK:'[';
+RBRACK:']';
