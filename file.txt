@@ -1,3 +1,4 @@
-Program Hello
-Print *, ("Hello World!")
-End Program
+integer y
+string s
+return
+end

@@ -237,16 +237,6 @@ public interface ErgasiaListener extends ParseTreeListener {
 	 */
 	void exitLabeled_statement(ErgasiaParser.Labeled_statementContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ErgasiaParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void enterStatement(ErgasiaParser.StatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ErgasiaParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void exitStatement(ErgasiaParser.StatementContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link ErgasiaParser#label}.
 	 * @param ctx the parse tree
 	 */
@@ -256,6 +246,16 @@ public interface ErgasiaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLabel(ErgasiaParser.LabelContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ErgasiaParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterStatement(ErgasiaParser.StatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ErgasiaParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitStatement(ErgasiaParser.StatementContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ErgasiaParser#simple_statement}.
 	 * @param ctx the parse tree
