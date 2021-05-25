@@ -1,6 +1,6 @@
 grammar Ergasia;
 
-program : body EOL END EOL* EOF subprograms;
+program : body EOL* END EOL* EOF subprograms;
 
 body : declarations statements ;
 
@@ -50,14 +50,14 @@ label : ICONST;
 
 statement : simple_statement| compound_statement;
 
-simple_statement : assignment EOL
+simple_statement : (assignment
 | goto_statement
 | if_statement
 | subroutine_call
 | io_statement
 | CONTINUE
 | RETURN
-| STOP;
+| STOP) EOL*;
 
 assignment : variable ASSIGN expression;
 
@@ -174,12 +174,15 @@ ID :([a-zA-Z][a-zA-Z'"'0-9]*)|([a-zA-Z]'_'[a-zA-Z'"'0-9]*'_')|([a-zA-Z][a-zA-Z'"
 /*ICONST3: ([1-9]+[0-9]*(([0X]?[1-9]+[0-9]*[0A_0C_0D_0E_0F][1-9]+[0-9]*)|([B_b][1]+[0-1]*)|)?)|[0]; */
 
 ICONST: AADM0|((([0][X]AADM0)|[0])[A_C_D_E_F][0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0];
-/*RCONST:([1-9][0-9]*[.])[0-9]+;*/
+RCONST:([1-9][0-9]*[.])[0-9]+;
+CCONST:AUTAKI.*AUTAKI; /* EDO ISOS YPARXEI THEMA */
 
+SCONST:DOUBLE_AUTAKI.*DOUBLE_AUTAKI EOL; /* EDO ISOS YPARXEI THEMA */
 
 AUTAKI:'\'';
+DOUBLE_AUTAKI:'"';
 LCONST : (DOT'TRUE'DOT)|(DOT'FALSE'DOT) ;
-CCONST:AUTAKI.*AUTAKI; /* EDO yparxei enas periorismos */
+
 
 /* Telestes */
 OROP:'.OR.';
