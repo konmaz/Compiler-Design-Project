@@ -1,6 +1,6 @@
 grammar Ergasia;
 
-program : body END subprograms;
+program : body EOL END EOL* EOF subprograms;
 
 body : declarations statements ;
 
@@ -46,11 +46,11 @@ statements : statements labeled_statement| labeled_statement;
 
 labeled_statement : label statement| statement;
 
-statement : simple_statement| compound_statement;
-
 label : ICONST;
 
-simple_statement : assignment
+statement : simple_statement| compound_statement;
+
+simple_statement : assignment EOL
 | goto_statement
 | if_statement
 | subroutine_call
@@ -143,7 +143,7 @@ DOT: '.';
 /* lexeis-kleidia */
 FUNCTION :'FUNCTION'|'function';
 SUBROUTINE :'SUBROUTINE'|'subroutine';
-END :'END'|'end';
+END:'END'|'end';
 COMMON :'COMMON'|'common';
 INTEGER:'INTEGER'|'integer';
 REAL:'REAL'|'real';
@@ -170,10 +170,14 @@ STOP:'STOP'|'stop';
 RETURN:'RETURN'|'return';
 
 ID :([a-zA-Z][a-zA-Z'"'0-9]*)|([a-zA-Z]'_'[a-zA-Z'"'0-9]*'_')|([a-zA-Z][a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_')|([a-zA-Z]'_'[a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_');
+ICONST: ([1-9]+[0-9]*(([0X]?[1-9]+[0-9]*[0A_0C_0D_0E_0F][1-9]+[0-9]*)|([B_b][1]+[0-1]*)|)?)|[0];
+
+/*RCONST:([1-9][0-9]*[.])[0-9]+;*/
+
 
 AUTAKI:'\'';
 LCONST : (DOT'TRUE'DOT)|(DOT'FALSE'DOT) ;
-CCONST:AUTAKI.*AUTAKI;
+CCONST:AUTAKI.*AUTAKI; /* EDO yparxei enas periorismos */
 
 /* Telestes */
 OROP:'.OR.';
@@ -194,4 +198,12 @@ ASSIGN:'=';
 COLON:':';
 LBRACK:'[';
 RBRACK:']';
-WS: [ \t\n]+ -> skip;
+
+
+
+EOL:[\r\n] +;
+
+WS : [ \t]+ -> skip;
+ErrChar
+  : .
+  ;
