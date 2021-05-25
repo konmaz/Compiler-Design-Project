@@ -195,6 +195,7 @@ DIVOP:'/';
 POWEROP:'**';
 
 /* Alles lektikes monades */
+LISTFUNC : [C](([A][D]*)|[D]+)[R];
 
 LPAREN:'(';
 RPAREN:')';
@@ -206,7 +207,7 @@ RBRACK:']';
 
 AADM0 : [1-9]+[0-9]*; /* Arithmos Alla Den Xekina Me 0 */
 
-EOL:[\r\n]+;
+EOL: ('$'.*)?[\r\n]+;
 
 WS : [ \t]+ -> skip;
 ErrChar
