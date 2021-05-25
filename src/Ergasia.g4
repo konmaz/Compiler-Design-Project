@@ -1,10 +1,10 @@
 grammar Ergasia;
 
-program : body END subprograms ;
+program : body END subprograms;
 
 body : declarations statements ;
 
-declarations : declarations type vars  | declarations COMMON cblock_list | declarations DATA vals | /* epsilon */ ;
+declarations : declarations type vars | declarations COMMON cblock_list | declarations DATA vals | /* epsilon */ ;
 
 type : INTEGER | REAL | COMPLEX | LOGICAL | CHARACTER | STRING;
 
@@ -169,7 +169,7 @@ ENDDO:'ENDDO'|'enddo';
 STOP:'STOP'|'stop';
 RETURN:'RETURN'|'return';
 
-ID :('"'[a-zA-Z][a-zA-Z'"'0-9]*'"')|('"'[a-zA-Z]'_'[a-zA-Z'"'0-9]*'"''_')|('"'[a-zA-Z][a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_''"')|('"'[a-zA-Z]'_'[a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_''"');
+ID :([a-zA-Z][a-zA-Z'"'0-9]*)|([a-zA-Z]'_'[a-zA-Z'"'0-9]*'_')|([a-zA-Z][a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_')|([a-zA-Z]'_'[a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_');
 
 AUTAKI:'\'';
 LCONST : (DOT'TRUE'DOT)|(DOT'FALSE'DOT) ;
@@ -194,3 +194,4 @@ ASSIGN:'=';
 COLON:':';
 LBRACK:'[';
 RBRACK:']';
+WS: [ \t\n]+ -> skip;
