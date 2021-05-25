@@ -6,6 +6,8 @@ body : declarations statements;
 
 declarations : declarations type vars | declarations COMMON cblock_list | declarations DATA vals | /* epsilon */ ;
 
+type : INTEGER | REAL | COMPLEX | LOGICAL | CHARACTER | STRING;
+
 vars : vars COMMA undef_variable | undef_variable;
 
 undef_variable : listspec ID LPAREN dims RPAREN | listspec ID;
@@ -43,6 +45,8 @@ complex_constant : LPAREN RCONST COLON sign RCONST RPAREN;
 statements : statements labeled_statement| labeled_statement;
 
 labeled_statement : label statement| statement;
+
+statement : simple_statement| compound_statement;
 
 label : ICONST;
 
@@ -118,8 +122,7 @@ compound_statement : branch_statement| loop_statement;
 
 branch_statement : IF LPAREN expression RPAREN THEN body tail;
 
-tail : ELSE body ENDIF
-| ENDIF;
+tail : ELSE body ENDIF | ENDIF;
 
 loop_statement : DO ID ASSIGN iter_space body ENDDO;
 
@@ -134,6 +137,37 @@ formal_parameters : type vars COMMA formal_parameters | type vars;
 
 /* Lexical */
 
+DOT: '.';
+/* lexeis-kleidia */
+FUNCTION :'FUNCTION'|'function';
+SUBROUTINE :'SUBROUTINE'|'subroutine';
+END :'END'|'end';
+COMMON :'COMMON'|'common';
+INTEGER:'INTEGER'|'integer';
+REAL:'REAL'|'real';
+COMPLEX:'COMPLEX'|'complex';
+LOGICAL:'LOGICAL'|'logical';
+CHARACTER:'CHARACTER'|'character';
+STRING:'STRING'|'string';
+LIST:'LIST'|'list';
+DATA:'DATA'|'data';
+CONTINUE:'CONTINUE'|'continue';
+GOTO:'GOTO'|'goto'; /* OPOIOS XRHSIMOPOIEI GOTO EINAI AXIOS THS MIRAS TOU */
+CALL:'CALL'|'call';
+READ:'READ'|'read';
+WRITE:'WRITE'|'write';
+LENGTH:'LENGTH'|'length';
+NEW:'NEW'|'new';
+IF:'IF'|'if';
+THEN:'THEN'|'then';
+ELSE:'ELSE'|'else';
+ENDIF:'ENDIF'|'endif';
+DO:'DO'|'do';
+ENDDO:'ENDDO'|'enddo';
+STOP:'STOP'|'stop';
+RETURN:'RETURN'|'return';
 
-ID : ('"'[a-zA-Z][a-zA-Z'"'0-9]*'"')|('"'[a-zA-Z]'_'[a-zA-Z'"'0-9]*'"''_')|('"'[a-zA-Z][a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_''"')|('"'[a-zA-Z]'_'[a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_''"');
+ID :('"'[a-zA-Z][a-zA-Z'"'0-9]*'"')|('"'[a-zA-Z]'_'[a-zA-Z'"'0-9]*'"''_')|('"'[a-zA-Z][a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_''"')|('"'[a-zA-Z]'_'[a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_''"');
 
+
+LCONST : (DOT'TRUE'DOT)|(DOT'FALSE'DOT) ;
