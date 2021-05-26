@@ -1,6 +1,6 @@
 grammar Ergasia;
 
-program : body  END subprograms;
+program : body EOL* END EOL* EOF subprograms;
 
 body : declarations statements ;
 
@@ -50,14 +50,14 @@ label : ICONST;
 
 statement : simple_statement| compound_statement;
 
-simple_statement : assignment
+simple_statement : (assignment
 | goto_statement
 | if_statement
 | subroutine_call
 | io_statement
 | CONTINUE
 | RETURN
-| STOP;
+| STOP) EOL*;
 
 assignment : variable ASSIGN expression;
 
@@ -177,7 +177,7 @@ ICONST: AADM0|((([0][X]AADM0)|[0])[A_C_D_E_F][0-9]*)|([0][o][1-7]+[0-9]*)|([0][B
 RCONST:([1-9][0-9]*[.])[0-9]+;
 CCONST:AUTAKI.*AUTAKI; /* EDO ISOS YPARXEI THEMA */
 
-SCONST:DOUBLE_AUTAKI.*DOUBLE_AUTAKI; /* EDO ISOS YPARXEI THEMA */
+SCONST:DOUBLE_AUTAKI.*DOUBLE_AUTAKI EOL; /* EDO ISOS YPARXEI THEMA */
 
 AUTAKI:'\'';
 DOUBLE_AUTAKI:'"';
@@ -207,8 +207,9 @@ RBRACK:']';
 
 AADM0 : [1-9]+[0-9]*; /* Arithmos Alla Den Xekina Me 0 */
 
-
-
-EOL: ('$'.*)?[\r\n]+ -> skip;
+EOL: ('$'.*)?[\r\n]+;
 
 WS : [ \t]+ -> skip;
+ErrChar
+  : .
+  ;
