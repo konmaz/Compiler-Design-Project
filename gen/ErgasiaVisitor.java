@@ -148,17 +148,17 @@ public interface ErgasiaVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLabeled_statement(ErgasiaParser.Labeled_statementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ErgasiaParser#statement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStatement(ErgasiaParser.StatementContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link ErgasiaParser#label}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitLabel(ErgasiaParser.LabelContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ErgasiaParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStatement(ErgasiaParser.StatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ErgasiaParser#simple_statement}.
 	 * @param ctx the parse tree

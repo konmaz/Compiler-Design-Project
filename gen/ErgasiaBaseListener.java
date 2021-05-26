@@ -291,18 +291,6 @@ public class ErgasiaBaseListener implements ErgasiaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStatement(ErgasiaParser.StatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStatement(ErgasiaParser.StatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterLabel(ErgasiaParser.LabelContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -310,6 +298,18 @@ public class ErgasiaBaseListener implements ErgasiaListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitLabel(ErgasiaParser.LabelContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStatement(ErgasiaParser.StatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStatement(ErgasiaParser.StatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -177,14 +177,14 @@ public class ErgasiaBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitStatement(ErgasiaParser.StatementContext ctx) { return visitChildren(ctx); }
+	@Override public T visitLabel(ErgasiaParser.LabelContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLabel(ErgasiaParser.LabelContext ctx) { return visitChildren(ctx); }
+	@Override public T visitStatement(ErgasiaParser.StatementContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
