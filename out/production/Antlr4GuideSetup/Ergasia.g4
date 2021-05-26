@@ -1,1533 +1,214 @@
-/*	
- * Fortran 77 grammar for ANTLR 2.7.5
- * Adadpted from Fortran 77 PCCTS grammar by Olivier Dragon
- * Original PCCTS grammar by Terence Parr
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
- *
- */
-
-/**
- * ported to Antlr4 by Tom Everett
- */
-
-/*
- * Updated by Tom Everett, 2018
- */
 grammar Ergasia;
 
+program : body  END subprograms;
 
-// multi-line comments?
-commentStatement
-    : COMMENT+
-    ;
-    
-program
-   : commentStatement* (executableUnit commentStatement*)+ EOL*
-   ;
-
-executableUnit
-   : functionSubprogram
-   | mainProgram
-   | subroutineSubprogram
-   | blockdataSubprogram
-   ;
-
-mainProgram
-   : (programStatement)? subprogramBody
-   ;
-
-functionSubprogram
-   : functionStatement subprogramBody
-   ;
-
-subroutineSubprogram
-   : subroutineStatement subprogramBody
-   ;
-
-blockdataSubprogram
-   : blockdataStatement subprogramBody
-   ;
-
-otherSpecificationStatement
-   : dimensionStatement
-   | equivalenceStatement
-   | intrinsicStatement
-   | saveStatement
-   ;
-
-executableStatement
-   : (assignmentStatement | gotoStatement | ifStatement | doStatement | continueStatement | stopStatement | pauseStatement | readStatement | writeStatement | printStatement | rewindStatement | backspaceStatement | openStatement | closeStatement | endfileStatement | inquireStatement | callStatement | returnStatement)
-   ;
-
-programStatement
-   : PROGRAM NAME EOL
-   ;
-
-entryStatement
-   : ENTRY NAME (LPAREN namelist RPAREN)?
-   ;
-
-functionStatement
-   : type_? FUNCTION NAME LPAREN namelist? RPAREN EOL?
-   ;
-
-blockdataStatement
-   : BLOCK NAME
-   ;
-
-subroutineStatement
-   : SUBROUTINE NAME (LPAREN namelist? RPAREN)? EOL?
-   ;
-
-namelist
-   : identifier (COMMA identifier)*
-   ;
-
-statement
-   : entryStatement
-   | implicitStatement
-   | parameterStatement
-   | typeStatement
-   | commonStatement
-   | pointerStatement
-   | externalStatement
-   | otherSpecificationStatement
-   | dataStatement
-   | (statementFunctionStatement) statementFunctionStatement
-   | executableStatement
-   ;
-
-subprogramBody
-   : commentStatement* (wholeStatement commentStatement*)+ endStatement
-   ;
-
-wholeStatement
-   : LABEL? statement EOL
-   ;
-   
-endStatement
-   : LABEL? END
-   ;
-
-dimensionStatement
-   : DIMENSION arrayDeclarators
-   ;
-
-arrayDeclarator
-   : (NAME | REAL) LPAREN arrayDeclaratorExtents RPAREN
-   ;
-
-arrayDeclarators
-   : arrayDeclarator (COMMA arrayDeclarator)*
-   ;
-
-arrayDeclaratorExtents
-   : arrayDeclaratorExtent (COMMA arrayDeclaratorExtent)*
-   ;
-
-arrayDeclaratorExtent
-   : iexprCode (COLON (iexprCode | STAR))?
-   | STAR
-   ;
-
-equivalenceStatement
-   : EQUIVALENCE equivEntityGroup (COMMA equivEntityGroup)*
-   ;
-
-equivEntityGroup
-   : LPAREN equivEntity (COMMA equivEntity)* RPAREN
-   ;
-
-equivEntity
-   : varRef
-   ;
-
-commonStatement
-   : COMMON (commonBlock (COMMA commonBlock)* | commonItems)
-   ;
-
-commonName
-   : DIV (NAME DIV | DIV)
-   ;
-
-commonItem
-   : NAME
-   | arrayDeclarator
-   ;
-
-commonItems
-   : commonItem (COMMA commonItem)*
-   ;
-
-commonBlock
-   : commonName commonItems
-   ;
-
-typeStatement
-   : typename_ typeStatementNameList
-   | characterWithLen typeStatementNameCharList
-   ;
-
-typeStatementNameList
-   : typeStatementName (COMMA typeStatementName)*
-   ;
-
-typeStatementName
-   : NAME
-   | arrayDeclarator
-   ;
-
-typeStatementNameCharList
-   : typeStatementNameChar (COMMA typeStatementNameChar)*
-   ;
-
-typeStatementNameChar
-   : typeStatementName (typeStatementLenSpec)?
-   ;
-
-typeStatementLenSpec
-   : STAR lenSpecification
-   ;
-
-typename_
-   : (REAL | COMPLEX (STAR ICON?)? | DOUBLE COMPLEX | DOUBLE PRECISION | INTEGER | LOGICAL | CHARACTER)
-   ;
-
-type_
-   : typename_
-   | characterWithLen
-   ;
-
-typenameLen
-   : STAR ICON
-   ;
-
-pointerStatement
-   : POINTER pointerDecl (COMMA pointerDecl)*
-   ;
-
-pointerDecl
-   : LPAREN NAME COMMA NAME RPAREN
-   ;
-
-implicitStatement
-   : IMPLICIT (implicitNone | implicitSpecs)
-   ;
-
-implicitSpec
-   : type_ LPAREN implicitLetters RPAREN
-   ;
-
-implicitSpecs
-   : implicitSpec (COMMA implicitSpec)*
-   ;
-
-implicitNone
-   : NONE
-   ;
-
-implicitLetter
-   : NAME
-   ;
-
-implicitRange
-   : implicitLetter (MINUS implicitLetter)?
-   ;
-
-implicitLetters
-   : implicitRange (COMMA implicitRange)*
-   ;
-
-lenSpecification
-   : (LPAREN STAR RPAREN) LPAREN STAR RPAREN
-   | ICON
-   | LPAREN intConstantExpr RPAREN
-   ;
-
-characterWithLen
-   : characterExpression (cwlLen)?
-   ;
-
-cwlLen
-   : STAR lenSpecification
-   ;
-
-parameterStatement
-   : PARAMETER LPAREN paramlist RPAREN
-   ;
-
-paramlist
-   : paramassign (COMMA paramassign)*
-   ;
-
-paramassign
-   : NAME ASSIGN constantExpr
-   ;
-
-externalStatement
-   : EXTERNAL namelist
-   ;
-
-intrinsicStatement
-   : INTRINSIC namelist
-   ;
-
-saveStatement
-   : SAVE (saveEntity (COMMA saveEntity)*)?
-   ;
-
-saveEntity
-   : (NAME | DIV NAME DIV)
-   ;
-
-dataStatement
-   : DATA dataStatementEntity ((COMMA)? dataStatementEntity)*
-   ;
-
-dataStatementItem
-   : varRef
-   | dataImpliedDo
-   ;
-
-dataStatementMultiple
-   : ((ICON | NAME) STAR)? (constant | NAME)
-   ;
-
-dataStatementEntity
-   : dse1 dse2
-   ;
-
-dse1
-   : dataStatementItem (COMMA dataStatementItem)* DIV
-   ;
-
-dse2
-   : dataStatementMultiple (COMMA dataStatementMultiple)* DIV
-   ;
-
-dataImpliedDo
-   : LPAREN dataImpliedDoList COMMA dataImpliedDoRange RPAREN
-   ;
-
-dataImpliedDoRange
-   : NAME ASSIGN intConstantExpr COMMA intConstantExpr (COMMA intConstantExpr)?
-   ;
-
-dataImpliedDoList
-   : dataImpliedDoListWhat
-   | COMMA dataImpliedDoList
-   ;
-
-dataImpliedDoListWhat
-   : (varRef | dataImpliedDo)
-   ;
-
-gotoStatement
-   : ((GO | GOTO) to) (unconditionalGoto | computedGoto | assignedGoto)
-   ;
-
-unconditionalGoto
-   : lblRef
-   ;
-
-computedGoto
-   : LPAREN labelList RPAREN (COMMA)? integerExpr
-   ;
-
-lblRef
-   : ICON
-   ;
-
-labelList
-   : lblRef (COMMA lblRef)*
-   ;
-
-assignedGoto
-   : NAME ((COMMA)? LPAREN labelList RPAREN)?
-   ;
-
-ifStatement
-   : IF LPAREN logicalExpression RPAREN (blockIfStatement | logicalIfStatement | arithmeticIfStatement)
-   ;
-
-arithmeticIfStatement
-   : lblRef COMMA lblRef COMMA lblRef
-   ;
-
-logicalIfStatement
-   : executableStatement
-   ;
-
-blockIfStatement
-   : firstIfBlock elseIfStatement* elseStatement? endIfStatement
-   ;
-
-firstIfBlock
-   : THEN EOL? commentStatement* (wholeStatement commentStatement*)+
-   ;
-
-elseIfStatement
-   : (ELSEIF | (ELSE IF)) LPAREN logicalExpression RPAREN THEN EOL? wholeStatement+
-   ;
-
-elseStatement
-   : ELSE EOL? commentStatement* (wholeStatement commentStatement*)+
-   ;
-
-endIfStatement
-   : (ENDIF | END IF)
-   ;
-
-doStatement
-   : DO (doWithLabel | doWithEndDo)
-   ;
-
-doVarArgs
-   : variableName ASSIGN intRealDpExpr COMMA intRealDpExpr (COMMA intRealDpExpr)?
-   ;
-
-doWithLabel
-   : lblRef COMMA? doVarArgs EOL? doBody EOL? continueStatement
-   ;
-
-doBody
-   : (wholeStatement) +
-   ;
-
-doWithEndDo
-   : doVarArgs EOL? doBody EOL? enddoStatement
-   ;
-
-enddoStatement
-   : (ENDDO | (END DO))
-   ;
-
-continueStatement
-   : lblRef* CONTINUE
-   ;
-
-stopStatement
-   : STOP (ICON | HOLLERITH)?
-   ;
-
-pauseStatement
-   : PAUSE (ICON | HOLLERITH)
-   ;
-
-writeStatement
-   : WRITE LPAREN controlInfoList RPAREN ((COMMA? ioList) +)?
-   ;
-
-readStatement
-   : READ (formatIdentifier ((COMMA ioList) +)?)
-   ;
-
-printStatement
-   : PRINT (formatIdentifier ((COMMA ioList) +)?)
-   ;
-
-assignmentStatement
-   : varRef ASSIGN expression
-   ;
-
-controlInfoList
-   : controlInfoListItem (COMMA controlInfoListItem)*
-   ;
-
-controlErrSpec
-   : controlErr ASSIGN (lblRef | NAME)
-   ;
-
-controlInfoListItem
-   : unitIdentifier
-   | (HOLLERITH | SCON)
-   | controlFmt ASSIGN formatIdentifier
-   | controlUnit ASSIGN unitIdentifier
-   | controlRec ASSIGN integerExpr
-   | controlEnd ASSIGN lblRef
-   | controlErrSpec
-   | controlIostat ASSIGN varRef
-   ;
-
-ioList
-   : (ioListItem COMMA NAME ASSIGN) ioListItem
-   | (ioListItem COMMA ioListItem) ioListItem COMMA ioList
-   | ioListItem
-   ;
-
-ioListItem
-   : (LPAREN ioList COMMA NAME ASSIGN) ioImpliedDoList
-   | expression
-   ;
-
-ioImpliedDoList
-   : LPAREN ioList COMMA NAME ASSIGN intRealDpExpr COMMA intRealDpExpr (COMMA intRealDpExpr)? RPAREN
-   ;
-
-openStatement
-   : OPEN LPAREN openControl (COMMA openControl)* RPAREN
-   ;
-
-openControl
-   : unitIdentifier
-   | controlUnit ASSIGN unitIdentifier
-   | controlErrSpec
-   | controlFile ASSIGN characterExpression
-   | controlStatus ASSIGN characterExpression
-   | (controlAccess | controlPosition) ASSIGN characterExpression
-   | controlForm ASSIGN characterExpression
-   | controlRecl ASSIGN integerExpr
-   | controlBlank ASSIGN characterExpression
-   | controlIostat ASSIGN varRef
-   ;
-
-controlFmt
-   : FMT
-   ;
-
-controlUnit
-   : UNIT
-   ;
-
-controlRec
-   : NAME
-   ;
-
-controlEnd
-   : END
-   ;
-
-controlErr
-   : ERR
-   ;
-
-controlIostat
-   : IOSTART
-   ;
-
-controlFile
-   : FILE
-   ;
-
-controlStatus
-   : STATUS
-   ;
-
-controlAccess
-   : ACCESS
-   ;
-
-controlPosition
-   : POSITION
-   ;
-
-controlForm
-   : FORM
-   ;
-
-controlRecl
-   : RECL
-   ;
-
-controlBlank
-   : BLANK
-   ;
-
-controlExist
-   : EXIST
-   ;
-
-controlOpened
-   : OPENED
-   ;
-
-controlNumber
-   : NUMBER
-   ;
-
-controlNamed
-   : NAMED
-   ;
-
-controlName
-   : NAME
-   ;
-
-controlSequential
-   : SEQUENTIAL
-   ;
-
-controlDirect
-   : NAME
-   ;
-
-controlFormatted
-   : FORMATTED
-   ;
-
-controlUnformatted
-   : UNFORMATTED
-   ;
-
-controlNextrec
-   : NEXTREC
-   ;
-
-closeStatement
-   : CLOSE LPAREN closeControl (COMMA closeControl)* RPAREN
-   ;
-
-closeControl
-   : unitIdentifier
-   | controlUnit ASSIGN unitIdentifier
-   | controlErrSpec
-   | controlStatus ASSIGN characterExpression
-   | controlIostat ASSIGN varRef
-   ;
-
-inquireStatement
-   : INQUIRE LPAREN inquireControl (COMMA inquireControl)* RPAREN
-   ;
-
-inquireControl
-   : controlUnit ASSIGN unitIdentifier
-   | controlFile ASSIGN characterExpression
-   | controlErrSpec
-   | (controlIostat | controlExist | controlOpened | controlNumber | controlNamed | controlName | controlAccess | controlSequential | controlDirect | controlForm | controlFormatted | controlUnformatted | controlRecl | controlNextrec | controlBlank) ASSIGN varRef
-   | unitIdentifier
-   ;
-
-backspaceStatement
-   : BACKSPACE berFinish
-   ;
-
-endfileStatement
-   : ENDFILE berFinish
-   ;
-
-rewindStatement
-   : REWIND berFinish
-   ;
-
-berFinish
-   : (unitIdentifier (unitIdentifier) | LPAREN berFinishItem (COMMA berFinishItem)* RPAREN)
-   ;
-
-berFinishItem
-   : unitIdentifier
-   | controlUnit ASSIGN unitIdentifier
-   | controlErrSpec
-   | controlIostat ASSIGN varRef
-   ;
-
-unitIdentifier
-   : iexpr
-   | STAR
-   ;
-
-formatIdentifier
-   : (SCON | HOLLERITH)
-   | iexpr
-   | STAR
-   ;
-
-formatStatement
-   : FORMAT LPAREN fmtSpec RPAREN
-   ;
-
-fmtSpec
-   : (formatedit | formatsep (formatedit)?) (formatsep (formatedit)? | COMMA (formatedit | formatsep (formatedit)?))*
-   ;
-
-formatsep
-   : DIV
-   | COLON
-   | DOLLAR
-   ;
-
-formatedit
-   : XCON
-   | editElement
-   | ICON editElement
-   | (PLUS | MINUS)? PCON ((ICON)? editElement)?
-   ;
-
-editElement
-   : (FCON | SCON | HOLLERITH | NAME)
-   | LPAREN fmtSpec RPAREN
-   ;
-
-statementFunctionStatement
-   : LET sfArgs ASSIGN expression
-   ;
-
-sfArgs
-   : NAME LPAREN namelist RPAREN
-   ;
-
-callStatement
-   : CALL subroutineCall
-   ;
-
-subroutineCall
-   : NAME (LPAREN (callArgumentList)? RPAREN)?
-   ;
-
-callArgumentList
-   : callArgument (COMMA callArgument)*
-   ;
-
-callArgument
-   : expression
-   | STAR lblRef
-   ;
-
-returnStatement
-   : RETURN (integerExpr)?
-   ;
-
-expression
-   : ncExpr (COLON ncExpr)?
-   ;
-
-ncExpr
-   : lexpr0 (concatOp lexpr0)*
-   ;
-
-lexpr0
-   : lexpr1 ((NEQV | EQV) lexpr1)*
-   ;
-
-lexpr1
-   : lexpr2 (LOR lexpr2)*
-   ;
-
-lexpr2
-   : lexpr3 (LAND lexpr3)*
-   ;
-
-lexpr3
-   : LNOT lexpr3
-   | lexpr4
-   ;
-
-lexpr4
-   : aexpr0 ((LT | LE | EQ | NE | GT | GE) aexpr0)?
-   ;
-
-aexpr0
-   : aexpr1 ((PLUS | MINUS) aexpr1)*
-   ;
-
-aexpr1
-   : aexpr2 ((STAR | DIV) aexpr2)*
-   ;
-
-aexpr2
-   : (PLUS | MINUS)* aexpr3
-   ;
-
-aexpr3
-   : aexpr4 (POWER aexpr4)*
-   ;
-
-aexpr4
-   : unsignedArithmeticConstant
-   | (HOLLERITH | SCON)
-   | logicalConstant
-   | varRef
-   | LPAREN expression RPAREN
-   ;
-
-iexpr
-   : iexpr1 ((PLUS | MINUS) iexpr1)*
-   ;
-
-iexprCode
-   : iexpr1 ((PLUS | MINUS) iexpr1)*
-   ;
-
-iexpr1
-   : iexpr2 ((STAR | DIV) iexpr2)*
-   ;
-
-iexpr2
-   : (PLUS | MINUS)* iexpr3
-   ;
-
-iexpr3
-   : iexpr4 (POWER iexpr3)?
-   ;
-
-iexpr4
-   : ICON
-   | varRefCode
-   | LPAREN iexprCode RPAREN
-   ;
-
-constantExpr
-   : expression
-   ;
-
-arithmeticExpression
-   : expression
-   ;
-
-integerExpr
-   : iexpr
-   ;
-
-intRealDpExpr
-   : expression
-   ;
-
-arithmeticConstExpr
-   : expression
-   ;
-
-intConstantExpr
-   : expression
-   ;
-
-characterExpression
-   : expression
-   ;
-
-concatOp
-   : DIV DIV
-   ;
-
-logicalExpression
-   : expression
-   ;
-
-logicalConstExpr
-   : expression
-   ;
-
-arrayElementName
-   : NAME LPAREN integerExpr (COMMA integerExpr)* RPAREN
-   ;
-
-subscripts
-   : LPAREN (expression (COMMA expression)*)? RPAREN
-   ;
-
-varRef
-   : (NAME | REAL) (subscripts (substringApp)?)?
-   ;
-
-varRefCode
-   : NAME (subscripts (substringApp)?)?
-   ;
-
-substringApp
-   : LPAREN (ncExpr)? COLON (ncExpr)? RPAREN
-   ;
-
-variableName
-   : NAME
-   ;
-
-arrayName
-   : NAME
-   ;
-
-subroutineName
-   : NAME
-   ;
-
-functionName
-   : NAME
-   ;
-
-constant
-   : ((PLUS | MINUS))? unsignedArithmeticConstant
-   | (SCON | HOLLERITH)
-   | logicalConstant
-   ;
-
-unsignedArithmeticConstant
-   : (ICON | RCON)
-   | complexConstant
-   ;
-
-complexConstant
-   : LPAREN ((PLUS | MINUS))? (ICON | RCON) COMMA ((PLUS | MINUS))? (ICON | RCON) RPAREN
-   ;
-
-logicalConstant
-   : (TRUE | FALSE)
-   ;
-
-// needed because Fortran doesn't have reserved keywords. Putting the rule
-// 'keyword" instead of a few select keywords breaks the parser with harmful
-// non-determinisms
-identifier
-   : NAME
-   | REAL
-   ;
-
-to
-   : NAME
-   ;
+body : declarations statements ;
 
-
+declarations : declarations type vars | declarations COMMON cblock_list | declarations DATA vals | /* epsilon */ ;
 
-PROGRAM
-   : 'program' | 'PROGRAM'
-   ;
+type : INTEGER | REAL | COMPLEX | LOGICAL | CHARACTER | STRING;
 
+vars : vars COMMA undef_variable | undef_variable;
 
-ENTRY
-   : 'entry' | 'ENTRY'
-   ;
+undef_variable : listspec ID LPAREN dims RPAREN | listspec ID;
 
+listspec : LIST | /* e */;
 
-FUNCTION
-   : 'function' | 'FUNCTION'
-   ;
+dims : dims COMMA dim | dim;
 
+dim : ICONST | ID;
 
-BLOCK
-   : 'block' | 'BLOCK'
-   ;
+cblock_list : cblock_list cblock | cblock;
 
+cblock : DIVOP ID DIVOP id_list;
 
-SUBROUTINE
-   : 'subroutine' | 'SUBROUTINE'
-   ;
+id_list : id_list COMMA ID | ID;
 
+vals : vals COMMA ID value_list| ID value_list;
 
-END
-   : 'END' | 'end'
-   ;
+value_list : DIVOP values DIVOP;
 
+values : values COMMA value | value;
 
-DIMENSION
-   : 'dimension' | 'DIMENSION'
-   ;
+value : repeat sign constant | ADDOP constant | constant;
 
+repeat : ICONST MULOP | MULOP;
 
-REAL
-   : 'REAL' | 'real'
-   ;
+sign : ADDOP | /* e */;
 
+constant : simple_constant | complex_constant ;
 
-EQUIVALENCE
-   : 'EQUIVALENCE' | 'equivalence'
-   ;
+simple_constant : ICONST | RCONST | LCONST | CCONST | SCONST;
 
+complex_constant : LPAREN RCONST COLON sign RCONST RPAREN;
 
-COMMON
-   : 'common' | 'COMMON'
-   ;
+statements : statements labeled_statement| labeled_statement;
 
+labeled_statement : label statement| statement;
 
-POINTER
-   : 'pointer' | 'POINTER'
-   ;
+label : ICONST;
 
+statement : simple_statement| compound_statement;
 
-IMPLICIT
-   : 'implicit' | 'IMPLICIT'
-   ;
+simple_statement : assignment
+| goto_statement
+| if_statement
+| subroutine_call
+| io_statement
+| CONTINUE
+| RETURN
+| STOP;
 
+assignment : variable ASSIGN expression;
 
-NONE
-   : 'none' | 'NONE'
-   ;
+variable : ID LPAREN expressions RPAREN
+| LISTFUNC LPAREN expression RPAREN
+| ID;
 
+expressions : expressions COMMA expression | expression;
 
-CHARACTER
-   : 'character' | 'CHARACTER'
-   ;
 
+expression : expression OROP expression
+| expression ANDOP expression
+| expression RELOP expression
+| expression ADDOP expression
+| expression MULOP expression
+| expression DIVOP expression
+| expression POWEROP expression
+| NOTOP expression
+| ADDOP expression
+| variable
+| simple_constant
+| LENGTH LPAREN expression RPAREN
+| NEW LPAREN expression RPAREN
+| LPAREN expression RPAREN
+| LPAREN expression COLON expression RPAREN
+| listexpression;
 
-PARAMETER
-   : 'parameter' | 'PARAMETER'
-   ;
 
 
-EXTERNAL
-   : 'external' | 'EXTERNAL'
-   ;
+listexpression : LBRACK expressions RBRACK
+| LBRACK RBRACK;
 
+goto_statement : GOTO label
+| GOTO ID COMMA LPAREN labels RPAREN;
 
-INTRINSIC
-   : 'intrinsic' | 'INTRINSIC'
-   ;
+labels : labels COMMA label
+| label ;
 
+if_statement : IF LPAREN expression RPAREN label COMMA label COMMA label
+| IF LPAREN expression RPAREN simple_statement;
 
-SAVE
-   : 'save' | 'SAVE'
-   ;
+subroutine_call : CALL variable;
 
+io_statement : READ read_list
+| WRITE write_list;
 
-DATA
-   : 'data' | 'DATA'
-   ;
+read_list : read_list COMMA read_item
+| read_item;
 
+read_item : variable
+| LPAREN read_list COMMA ID ASSIGN iter_space RPAREN;
 
-GO
-   : 'GO' | 'go'
-   ;
+iter_space : expression COMMA expression step;
 
+step : COMMA expression
+| /* e */;
 
-GOTO
-   : 'GOTO' | 'goto'
-   ;
+write_list : write_list COMMA write_item| write_item;
 
+write_item : expression| LPAREN write_list COMMA ID ASSIGN iter_space RPAREN;
 
-IF
-   : 'IF' | 'if'
-   ;
+compound_statement : branch_statement| loop_statement;
 
+branch_statement : IF LPAREN expression RPAREN THEN body tail;
 
-THEN
-   : 'THEN' | 'then'
-   ;
+tail : ELSE body ENDIF | ENDIF;
 
+loop_statement : DO ID ASSIGN iter_space body ENDDO;
 
-ELSE
-   : 'ELSE' | 'else'
-   ;
+subprograms : subprograms subprogram | /* e */;
 
+subprogram : header body END;
 
-ENDIF
-   : 'ENDIF' | 'endif'
-   ;
+header : type listspec FUNCTION ID LPAREN formal_parameters RPAREN | SUBROUTINE ID LPAREN formal_parameters RPAREN | SUBROUTINE ID;
 
+formal_parameters : type vars COMMA formal_parameters | type vars;
 
-ELSEIF
-   : 'ELSEIF' | 'elseif'
-   ;
 
+/* Lexical */
 
-DO
-   : 'DO' | 'do'
-   ;
+DOT: '.';
 
+/* lexeis-kleidia */
+FUNCTION :'FUNCTION'|'function';
+SUBROUTINE :'SUBROUTINE'|'subroutine';
+END:'END'|'end';
+COMMON :'COMMON'|'common';
+INTEGER:'INTEGER'|'integer';
+REAL:'REAL'|'real';
+COMPLEX:'COMPLEX'|'complex';
+LOGICAL:'LOGICAL'|'logical';
+CHARACTER:'CHARACTER'|'character';
+STRING:'STRING'|'string';
+LIST:'LIST'|'list';
+DATA:'DATA'|'data';
+CONTINUE:'CONTINUE'|'continue';
+GOTO:'GOTO'|'goto'; /* OPOIOS XRHSIMOPOIEI GOTO EINAI AXIOS THS MIRAS TOU */
+CALL:'CALL'|'call';
+READ:'READ'|'read';
+WRITE:'WRITE'|'write';
+LENGTH:'LENGTH'|'length';
+NEW:'NEW'|'new';
+IF:'IF'|'if';
+THEN:'THEN'|'then';
+ELSE:'ELSE'|'else';
+ENDIF:'ENDIF'|'endif';
+DO:'DO'|'do';
+ENDDO:'ENDDO'|'enddo';
+STOP:'STOP'|'stop';
+RETURN:'RETURN'|'return';
 
-CONTINUE
-   : 'CONTINUE' | 'continue'
-   ;
+ID :([a-zA-Z][a-zA-Z'"'0-9]*)|([a-zA-Z]'_'[a-zA-Z'"'0-9]*'_')|([a-zA-Z][a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_')|([a-zA-Z]'_'[a-zA-Z'"'0-9]*'_'[a-zA-Z'"'0-9]*'_');
 
+/*ICONST3: ([1-9]+[0-9]*(([0X]?[1-9]+[0-9]*[0A_0C_0D_0E_0F][1-9]+[0-9]*)|([B_b][1]+[0-1]*)|)?)|[0]; */
 
-STOP
-   : 'STOP' | 'stop'
-   ;
+ICONST: AADM0|((([0][X]AADM0)|[0])[A_C_D_E_F][0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0];
+RCONST:([1-9][0-9]*[.])[0-9]+;
+CCONST:AUTAKI.*AUTAKI; /* EDO ISOS YPARXEI THEMA */
 
+SCONST:DOUBLE_AUTAKI.*DOUBLE_AUTAKI; /* EDO ISOS YPARXEI THEMA */
 
-ENDDO
-   : 'ENDDO' | 'enddo'
-   ;
+AUTAKI:'\'';
+DOUBLE_AUTAKI:'"';
+LCONST : (DOT'TRUE'DOT)|(DOT'FALSE'DOT) ;
 
 
-PAUSE
-   : 'pause' | 'PAUSE'
-   ;
+/* Telestes */
+OROP:'.OR.';
+ANDOP:'.AND.';
+NOTOP:'.NOT';
+RELOP: '.GT.'|'.GE.'|'.LT.'|'.LE.'|'.EQ.'|'.NE.';
+ADDOP:'+'|'-';
+MULOP:'*';
+DIVOP:'/';
+POWEROP:'**';
 
+/* Alles lektikes monades */
+LISTFUNC : [C](([A][D]*)|[D]+)[R];
 
-WRITE
-   : 'WRITE' | 'write'
-   ;
+LPAREN:'(';
+RPAREN:')';
+COMMA:',';
+ASSIGN:'=';
+COLON:':';
+LBRACK:'[';
+RBRACK:']';
 
+AADM0 : [1-9]+[0-9]*; /* Arithmos Alla Den Xekina Me 0 */
 
-READ
-   : 'READ' | 'read'
-   ;
 
 
-PRINT
-   : 'PRINT' | 'print'
-   ;
+EOL: ('$'.*)?[\r\n]+ -> skip;
 
-
-OPEN
-   : 'OPEN' | 'open'
-   ;
-
-
-FMT
-   : 'FMT' | 'fmt'
-   ;
-
-
-UNIT
-   : 'UNIT' | 'unit'
-   ;
-
-
-ERR
-   : 'err' | 'ERR'
-   ;
-
-
-IOSTAT
-   : 'IOSTAT' | 'iostat'
-   ;
-
-
-FORMAT
-   : 'FORMAT' | 'format'
-   ;
-
-
-LET
-   : 'LET' | 'let'
-   ;
-
-
-CALL
-   : 'CALL' | 'call'
-   ;
-
-
-RETURN
-   : 'RETURN' | 'return'
-   ;
-
-
-CLOSE
-   : 'CLOSE' | 'close'
-   ;
-
-
-DOUBLE
-   : 'DOUBLE' | 'double'
-   ;
-
-
-IOSTART
-   : 'IOSTART' | 'iostart'
-   ;
-
-
-SEQUENTIAL
-   : 'SEQUENTIAL' | 'sequential'
-   ;
-
-
-LABEL
-   : 'LABEL' | 'label'
-   ;
-
-
-FILE
-   : 'file' | 'FILE'
-   ;
-
-
-STATUS
-   : 'STATUS' | 'status'
-   ;
-
-
-ACCESS
-   : 'ACCESS' | 'access'
-   ;
-
-
-POSITION
-   : 'POSITION' | 'position'
-   ;
-
-
-FORM
-   : 'FORM' | 'form'
-   ;
-
-
-RECL
-   : 'RECL' | 'recl'
-   ;
-
-
-BLANK
-   : 'BLANK' | 'blank'
-   ;
-
-
-EXIST
-   : 'EXIST' | 'exist'
-   ;
-
-
-OPENED
-   : 'OPENED' | 'opened'
-   ;
-
-
-NUMBER
-   : 'NUMBER' | 'number'
-   ;
-
-
-NAMED
-   : 'NAMED' | 'named'
-   ;
-
-
-NAME_
-   : 'NAME' | 'name'
-   ;
-
-
-FORMATTED
-   : 'FORMATTED' | 'formatted'
-   ;
-
-
-UNFORMATTED
-   : 'UNFORMATTED' | 'unformatted'
-   ;
-
-
-NEXTREC
-   : 'NEXTREC' | 'nextrec'
-   ;
-
-
-INQUIRE
-   : 'INQUIRE' | 'inquire'
-   ;
-
-
-BACKSPACE
-   : 'BACKSPACE' | 'backspace'
-   ;
-
-
-ENDFILE
-   : 'ENDFILE' | 'endfile'
-   ;
-
-
-REWIND
-   : 'REWIND' | 'rewind'
-   ;
-
-
-DOLLAR
-   : '$'
-   ;
-
-
-COMMA
-   : ','
-   ;
-
-
-LPAREN
-   : '('
-   ;
-
-
-RPAREN
-   : ')'
-   ;
-
-
-COLON
-   : ':'
-   ;
-
-
-ASSIGN
-   : '='
-   ;
-
-
-MINUS
-   : '-'
-   ;
-
-
-PLUS
-   : '+'
-   ;
-
-
-DIV
-   : '/'
-   ;
-
-fragment STARCHAR
-   : '*'
-   ;
-
-
-
-POWER
-   : '**'
-   ;
-
-
-LNOT
-   : '.not.' | '.NOT.'
-   ;
-
-
-LAND
-   : '.and.' | '.AND.'
-   ;
-
-
-LOR
-   : '.or.' | '.OR.'
-   ;
-
-
-EQV
-   : '.eqv.' | '.EQV.'
-   ;
-
-
-NEQV
-   : '.neqv.' | '.NEQV.'
-   ;
-
-
-XOR
-   : '.xor.' | '.XOR.'
-   ;
-
-
-EOR
-   : '.eor.' | '.EOR.'
-   ;
-
-
-LT
-   : '.lt.' | '.LT.'
-   ;
-
-
-LE
-   : '.le.' | '.LE.'
-   ;
-
-
-GT
-   : '.gt.' | '.GT.'
-   ;
-
-
-GE
-   : '.ge.' | '.GE.'
-   ;
-
-
-NE
-   : '.ne.' | '.NE.'
-   ;
-
-
-EQ
-   : '.eq.' | '.EQ.'
-   ;
-
-
-TRUE
-   : '.true.' | '.TRUE.'
-   ;
-
-
-FALSE
-   : '.false.' | '.FALSE.'
-   ;
-
-
-XCON
-   : 'XCON'
-   ;
-
-
-PCON
-   : 'PCON'
-   ;
-
-
-FCON
-   : 'FCON'
-   ;
-
-
-CCON
-   : 'CCON'
-   ;
-
-
-HOLLERITH
-   : 'HOLLERITH'
-   ;
-
-
-CONCATOP
-   : 'CONCATOP'
-   ;
-
-
-CTRLDIRECT
-   : 'CTRLDIRECT'
-   ;
-
-
-CTRLREC
-   : 'CTRLREC'
-   ;
-
-
-TO
-   : 'TO'
-   ;
-
-
-SUBPROGRAMBLOCK
-   : 'SUBPROGRAMBLOCK'
-   ;
-
-
-DOBLOCK
-   : 'DOBLOCK'
-   ;
-
-
-AIF
-   : 'AIF'
-   ;
-
-
-THENBLOCK
-   : 'THENBLOCK'
-   ;
-
-
-ELSEBLOCK
-   : 'ELSEBLOCK'
-   ;
-
-
-CODEROOT
-   : 'CODEROOT'
-   ;
-
-
-COMPLEX
-   : 'COMPLEX' | 'complex'
-   ;
-
-
-PRECISION
-   : 'PRECISION' | 'precision'
-   ;
-
-
-INTEGER
-   : 'INTEGER' | 'integer'
-   ;
-
-
-LOGICAL
-   : 'LOGICAL' | 'logical'
-   ;
-
-
-fragment CONTINUATION
-   : ~ ('0' | ' ')
-   ;
-
-
-fragment ALNUM
-   : (ALPHA | NUM)
-   ;
-
-
-fragment HEX
-   : (NUM | 'a' .. 'f')
-   ;
-
-
-fragment SIGN
-   : ('+' | '-')
-   ;
-
-
-fragment FDESC
-   : ('i' | 'f' | 'd') (NUM) + '.' (NUM) + | ('e' | 'g') (NUM) + '.' (NUM) + ('e' (NUM) +)?
-   ;
-
-
-fragment EXPON
-   : ('e' | 'E' | 'd' | 'D') (SIGN)? (NUM) +
-   ;
-
-
-fragment ALPHA
-   : ('a' .. 'z') | ('A' .. 'Z')
-   ;
-
-
-fragment NUM
-   : ('0' .. '9')
-   ;
-
-// '' is used to drop the charater when forming the lexical token
-// Strings are assumed to start with a single quote (') and two
-// single quotes is meant as a literal single quote
-
-SCON
-   : '\'' ('\'' '\'' | ~ ('\'' | '\n' | '\r') | (('\n' | '\r' ('\n')?) '     ' CONTINUATION) ('\n' | '\r' ('\n')?) '     ' CONTINUATION)* '\''
-   ;
-
-RCON
-   : NUM+ '.' NUM* EXPON?
-   ;
-
-ICON
-   : NUM+
-   ;
-
-NAME
-   : (('i' | 'f' | 'd' | 'g' | 'e') (NUM) + '.') FDESC | (ALNUM +) (ALNUM)*
-   ;
-
-
-COMMENT
-   : {getCharPositionInLine() == 0}? ('c' | STARCHAR) (~ [\r\n])* EOL
-   ;
-
-STAR
-   : STARCHAR
-   ;
-
-
-STRINGLITERAL
-   : '"' ~ ["\r\n]* '"'
-   ;
-
-EOL
-   : [\r\n] +
-   ;
-
-LINECONT
-   : ((EOL '     $') | (EOL '     +')) -> skip
-   ;
-
-WS
-   : [\t ] + -> skip
-   ;
+WS : [ \t]+ -> skip;

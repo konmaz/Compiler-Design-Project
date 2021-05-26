@@ -199,7 +199,7 @@ LISTFUNC : [C](([A][D]*)|[D]+)[R];
 
 LPAREN:'(';
 RPAREN:')';
-COMMA:',';
+COMMA:'\,';
 ASSIGN:'=';
 COLON:':';
 LBRACK:'[';
@@ -209,6 +209,6 @@ AADM0 : [1-9]+[0-9]*; /* Arithmos Alla Den Xekina Me 0 */
 
 
 
-EOL: ('$'.*)?[\r\n]+ -> skip;
-
-WS : [ \t]+ -> skip;
+LINE_COMMENT
+    : '$' ~[\r\n]* -> skip
+;
