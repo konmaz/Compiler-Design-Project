@@ -1,6 +1,6 @@
 grammar Ergasia;
 
-program : body EOL* END EOL* EOF subprograms;
+program : body subprograms;
 
 body : declarations statements ;
 
@@ -50,14 +50,14 @@ label : ICONST;
 
 statement : simple_statement| compound_statement;
 
-simple_statement : (assignment
+simple_statement : assignment
 | goto_statement
 | if_statement
 | subroutine_call
 | io_statement
 | CONTINUE
 | RETURN
-| STOP) EOL*;
+| STOP;
 
 assignment : variable ASSIGN expression;
 
@@ -71,10 +71,13 @@ expressions : expressions COMMA expression | expression;
 expression : expression OROP expression
 | expression ANDOP expression
 | expression RELOP expression
-| expression ADDOP expression
+| expression op=POWEROP expression
+| expression op=(MULOP|DIVOP) expression
+| expression op=ADDOP expression
+/*| expression ADDOP expression
 | expression MULOP expression
 | expression DIVOP expression
-| expression POWEROP expression
+| expression POWEROP expression */
 | NOTOP expression
 | ADDOP expression
 | variable
@@ -154,7 +157,7 @@ STRING:'STRING'|'string';
 LIST:'LIST'|'list';
 DATA:'DATA'|'data';
 CONTINUE:'CONTINUE'|'continue';
-GOTO:'GOTO'|'goto'; /* OPOIOS XRHSIMOPOIEI GOTO EINAI AXIOS THS MIRAS TOU */
+GOTO:'GOTO'|'goto';
 CALL:'CALL'|'call';
 READ:'READ'|'read';
 WRITE:'WRITE'|'write';
@@ -173,22 +176,38 @@ ID :([a-zA-Z][a-zA-Z'"'0-9]*)|([a-zA-Z]'_'[a-zA-Z'"'0-9]*'_')|([a-zA-Z][a-zA-Z'"
 
 /*ICONST3: ([1-9]+[0-9]*(([0X]?[1-9]+[0-9]*[0A_0C_0D_0E_0F][1-9]+[0-9]*)|([B_b][1]+[0-1]*)|)?)|[0]; */
 
-ICONST: AADM0|((([0][X]AADM0)|[0])[A_C_D_E_F][0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0];
-RCONST:([1-9][0-9]*[.])[0-9]+;
-CCONST:AUTAKI.*AUTAKI; /* EDO ISOS YPARXEI THEMA */
+RCONST:(
+    ([0-9]*DOT[0-9]*)|
+    ([0-9]*DOT?[0-9]+[e_E]ADDOP?[0-9]+)|
+    ([0][X_x_A][0-9]+)|
+    ([0][X_x_A_O][X_x_A]*[0-9]*DOT[0-9]*)|
+    ([0][B_b][0-1]*DOT[0-1]*))|
+    ([0-9]+DOT?[e]ADDOP?[0-9]+)
 
-SCONST:DOUBLE_AUTAKI.*DOUBLE_AUTAKI EOL; /* EDO ISOS YPARXEI THEMA */
+
+    ;
+
+ICONST: ([0-9]*|((([0][X_x]AADM0)|[0])[A_C_D_E_F][0-9]*[A_C_D_E_F]*[0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0]*);
+
+
+
+CCONST:AUTAKI[ -~]*AUTAKI; /* EDO ISOS YPARXEI THEMA */
+SCONST:DOUBLE_AUTAKI[ -~]*DOUBLE_AUTAKI; /* EDO ISOS YPARXEI THEMA */
 
 AUTAKI:'\'';
 DOUBLE_AUTAKI:'"';
-LCONST : (DOT'TRUE'DOT)|(DOT'FALSE'DOT) ;
+LCONST : (DOT'TRUE'DOT)|(DOT'FALSE'DOT)|(DOT'true'DOT)|(DOT'false'DOT);
 
 
 /* Telestes */
-OROP:'.OR.';
-ANDOP:'.AND.';
-NOTOP:'.NOT';
-RELOP: '.GT.'|'.GE.'|'.LT.'|'.LE.'|'.EQ.'|'.NE.';
+OROP:DOT'OR'DOT|DOT'or'DOT;
+ANDOP:DOT'AND'DOT|DOT'and'DOT;
+NOTOP:DOT'not'DOT|DOT'not'DOT;
+RELOP:
+DOT'GT'DOT|DOT'GE'DOT|DOT'LT'DOT|DOT'LE'DOT|DOT'EQ'DOT|DOT'NE'DOT|
+DOT'gt'DOT|DOT'ge'DOT|DOT'lt'DOT|DOT'le'DOT|DOT'eq'DOT|DOT'ne'DOT;
+
+
 ADDOP:'+'|'-';
 MULOP:'*';
 DIVOP:'/';
@@ -207,9 +226,16 @@ RBRACK:']';
 
 AADM0 : [1-9]+[0-9]*; /* Arithmos Alla Den Xekina Me 0 */
 
-EOL: ('$'.*)?[\r\n]+;
 
-WS : [ \t]+ -> skip;
+
+LINE_COMMENT: '$' ~[\r\n]* -> skip;
+WS : [ \t\r\n\f]+ -> skip ;
+
+/*
+EOL : ('\r'|'\n')+
+    ;
 ErrChar
   : .
   ;
+
+*/
