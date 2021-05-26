@@ -178,19 +178,21 @@ ID :([a-zA-Z][a-zA-Z'"'0-9]*)|([a-zA-Z]'_'[a-zA-Z'"'0-9]*'_')|([a-zA-Z][a-zA-Z'"
 
 RCONST:(
     ([0-9]*DOT[0-9]*)|
-    ([0-9]+[e]ADDOP?[0-9]+)|
+    (DOT?[0-9]+[e_E]ADDOP?[0-9]+)|
     ([0][X_x_A][0-9]+)|
     ([0][X_x_A_O][X_x_A]*[0-9]*DOT[0-9]*)|
-    ([0][B][1]+[0-1]*DOT[0-1]*))|
+    ([0][B_b][0-1]*DOT[0-1]*))|
     ([0-9]+DOT?[e]ADDOP?[0-9]+)
+
+
     ;
 
 ICONST: ([0-9]*|((([0][X_x]AADM0)|[0])[A_C_D_E_F][0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0]*);
 
 
 
-CCONST:AUTAKI.*AUTAKI; /* EDO ISOS YPARXEI THEMA */
-SCONST:DOUBLE_AUTAKI.*DOUBLE_AUTAKI; /* EDO ISOS YPARXEI THEMA */
+CCONST:AUTAKI[ -~]*AUTAKI; /* EDO ISOS YPARXEI THEMA */
+SCONST:DOUBLE_AUTAKI[ -~]*DOUBLE_AUTAKI; /* EDO ISOS YPARXEI THEMA */
 
 AUTAKI:'\'';
 DOUBLE_AUTAKI:'"';
