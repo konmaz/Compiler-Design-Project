@@ -6,7 +6,7 @@ body : declarations statements ;
 
 declarations : declarations type vars | declarations COMMON cblock_list | declarations DATA vals | /* epsilon */ ;
 
-type : INTEGER | REAL | COMPLEX | LOGICAL | CHARACTER | STRING;
+type : INTEGER | REAL| COMPLEX | LOGICAL | CHARACTER | STRING;
 
 vars : vars COMMA undef_variable | undef_variable;
 
@@ -71,7 +71,7 @@ expressions : expressions COMMA expression | expression;
 expression : expression OROP expression
 | expression ANDOP expression
 | expression RELOP expression
-| expression op=POWEROP expression
+| <assoc=right> expression POWEROP expression
 | expression op=(MULOP|DIVOP) expression
 | expression op=ADDOP expression
 /*| expression ADDOP expression
