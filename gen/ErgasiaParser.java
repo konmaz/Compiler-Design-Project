@@ -2373,9 +2373,9 @@ public class ErgasiaParser extends Parser {
 						setState(347);
 						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
 						setState(348);
-						((ExpressionContext)_localctx).op = match(POWEROP);
+						match(POWEROP);
 						setState(349);
-						expression(13);
+						expression(12);
 						}
 						break;
 					case 5:
@@ -4143,7 +4143,7 @@ public class ErgasiaParser extends Parser {
 		"\u0168\3\2\2\2\u0154\u0155\f\21\2\2\u0155\u0156\7\'\2\2\u0156\u0167\5"+
 		"<\37\22\u0157\u0158\f\20\2\2\u0158\u0159\7(\2\2\u0159\u0167\5<\37\21\u015a"+
 		"\u015b\f\17\2\2\u015b\u015c\7*\2\2\u015c\u0167\5<\37\20\u015d\u015e\f"+
-		"\16\2\2\u015e\u015f\7.\2\2\u015f\u0167\5<\37\17\u0160\u0161\f\r\2\2\u0161"+
+		"\16\2\2\u015e\u015f\7.\2\2\u015f\u0167\5<\37\16\u0160\u0161\f\r\2\2\u0161"+
 		"\u0162\t\5\2\2\u0162\u0167\5<\37\16\u0163\u0164\f\f\2\2\u0164\u0165\7"+
 		"+\2\2\u0165\u0167\5<\37\r\u0166\u0154\3\2\2\2\u0166\u0157\3\2\2\2\u0166"+
 		"\u015a\3\2\2\2\u0166\u015d\3\2\2\2\u0166\u0160\3\2\2\2\u0166\u0163\3\2"+
