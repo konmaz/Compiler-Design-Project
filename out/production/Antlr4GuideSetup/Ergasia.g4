@@ -6,7 +6,7 @@ body : declarations statements ;
 
 declarations : declarations type vars | declarations COMMON cblock_list | declarations DATA vals | /* epsilon */ ;
 
-type : INTEGER | REAL | COMPLEX | LOGICAL | CHARACTER | STRING;
+type : INTEGER | REAL| COMPLEX | LOGICAL | CHARACTER | STRING;
 
 vars : vars COMMA undef_variable | undef_variable;
 
@@ -71,7 +71,7 @@ expressions : expressions COMMA expression | expression;
 expression : expression OROP expression
 | expression ANDOP expression
 | expression RELOP expression
-| expression op=POWEROP expression
+| <assoc=right> expression POWEROP expression
 | expression op=(MULOP|DIVOP) expression
 | expression op=ADDOP expression
 /*| expression ADDOP expression
@@ -187,7 +187,7 @@ RCONST:(
 
     ;
 
-ICONST: ([0-9]*|((([0][X_x]AADM0)|[0])[A_C_D_E_F][0-9]*[A_C_D_E_F]*[0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0]*);
+ICONST: ([0-9]+|((([0][X_x]AADM0)|[0])[A_C_D_E_F][0-9]*[A_C_D_E_F]*[0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0]*);
 
 
 
