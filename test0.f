@@ -1,4 +1,4 @@
-integer x(10,100,2),z(2),i,j,N
-x = 10
+integer x,y,z,k(10)
+x = 10+5+9
 return
 end

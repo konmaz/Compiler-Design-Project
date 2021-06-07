@@ -1,4 +1,4 @@
-integer y
+integer y,x,z(10),p
 string s
 return
 end

@@ -10,8 +10,14 @@ public class Ergasia {
         CommonTokenStream tokens = new CommonTokenStream( lexer );
         ErgasiaParser parser = new ErgasiaParser( tokens );
         ParseTree tree = parser.program();
-        DefPhase elekt = new DefPhase();
-        elekt.visit(tree);
+        ergListenerBaseVst elekt = new ergListenerBaseVst();
+        ParseTreeWalker walker = new ParseTreeWalker();
+        ergListenerBaseVst bstVst = new ergListenerBaseVst();
+        walker.walk(bstVst, tree);
+
+        //ParseTreeWalker walker = new ParseTreeWalker();
+        //walker.walk(elekt, tree );
+
         /*
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk( new ErgasiaWalker(), tree );
