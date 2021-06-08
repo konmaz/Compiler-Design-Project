@@ -1,7 +1,9 @@
 enum typosVarENUM {
     typINTEGER,
     typREAL,
-    typCOMPLEX,
+    typLOGICAL,
+    typCHARACTER,
+    typVOID
 }
 public class Metablites {
     String ID; //Onoma Metablitis

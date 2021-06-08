@@ -187,11 +187,11 @@ RCONST:(
 
     ;
 
-ICONST: ([0-9]+|((([0][X_x]AADM0)|[0])[A_C_D_E_F][0-9]*[A_C_D_E_F]*[0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0]*);
+ICONST: ([1-9]+|((([0][X_x]AADM0)|[0])[A_C_D_E_F][0-9]*[A_C_D_E_F]*[0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0]*);
 
 
 
-CCONST:AUTAKI[ -~_.]*AUTAKI; /* EDO ISOS YPARXEI THEMA */
+CCONST:AUTAKI[ -~]AUTAKI; /* EDO ISOS YPARXEI THEMA */
 SCONST:DOUBLE_AUTAKI[ -~]*DOUBLE_AUTAKI; /* EDO ISOS YPARXEI THEMA */
 
 AUTAKI:'\'';
@@ -231,11 +231,11 @@ AADM0 : [1-9]+[0-9]*; /* Arithmos Alla Den Xekina Me 0 */
 LINE_COMMENT: '$' ~[\r\n]* -> skip;
 WS : [ \t\r\n\f]+ -> skip ;
 
+
 /*
 EOL : ('\r'|'\n')+
     ;
 ErrChar
   : .
   ;
-
 */

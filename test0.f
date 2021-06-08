@@ -1,4 +1,4 @@
-integer x,y,z,k(10)
-real p,t,x
+integer x,z
+z = 5.14
 return
 end

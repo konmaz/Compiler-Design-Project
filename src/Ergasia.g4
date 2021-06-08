@@ -176,22 +176,43 @@ ID :([a-zA-Z][a-zA-Z'"'0-9]*)|([a-zA-Z]'_'[a-zA-Z'"'0-9]*'_')|([a-zA-Z][a-zA-Z'"
 
 /*ICONST3: ([1-9]+[0-9]*(([0X]?[1-9]+[0-9]*[0A_0C_0D_0E_0F][1-9]+[0-9]*)|([B_b][1]+[0-1]*)|)?)|[0]; */
 
+
+HEX_CHARS:[A-F]|[a-f];
+//ICONST: ([0-9]+|((([0][X_x]AADM0)|[0])[A_C_D_E_F][0-9]*[A_C_D_E_F]*[0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0]*);
+//ICONST: ([0-9]*|((([0][X_x]AADM0)|[0])[A_C_D_E_F][0-9]*[A_C_D_E_F]*[0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0]*);
+ICONST :
+[0]
+|[1-9]+[0-9]*
+|[0][Xx][1-9]+[0-9]*
+|[0][Xx]HEX_CHARS+[1-9]+[0-9]*
+|[0][Xx][1-9]+[0-9]*HEX_CHARS+[0-9]+
+|[0][Oo][1-7]+[0-7]*
+|[0][Bb][1]+[0-1]*;
+
+/*
+RCONST:
+([0-9]*DOT[0-9]+
+|[0-9]+DOT?[0-9]*)
+[Ee]?ADDOP?[0-9]+
+|[0][XxOoBb]{1}
+
+;
+*/
+
+
 RCONST:(
     ([0-9]*DOT[0-9]*)|
     ([0-9]*DOT?[0-9]+[e_E]ADDOP?[0-9]+)|
-    ([0][X_x_A][0-9]+)|
-    ([0][X_x_A_O][X_x_A]*[0-9]*DOT[0-9]*)|
-    ([0][B_b][0-1]*DOT[0-1]*))|
+    ([0][X_x_A_a][0-9]+)|
+    ([0][X_x_A_a_O_ο][X_x_A_a]*[0-9]*DOT[0-9]*())|
+    ([0][B_b][0-1]*DOT[0-1]*)
+    )|
     ([0-9]+DOT?[e]ADDOP?[0-9]+)
-
-
     ;
 
-ICONST: ([0-9]+|((([0][X_x]AADM0)|[0])[A_C_D_E_F][0-9]*[A_C_D_E_F]*[0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0]*);
 
 
-
-CCONST:AUTAKI[ -~_.]*AUTAKI; /* EDO ISOS YPARXEI THEMA */
+CCONST:AUTAKI[ -~]AUTAKI; /* EDO ISOS YPARXEI THEMA */
 SCONST:DOUBLE_AUTAKI[ -~]*DOUBLE_AUTAKI; /* EDO ISOS YPARXEI THEMA */
 
 AUTAKI:'\'';
@@ -231,11 +252,11 @@ AADM0 : [1-9]+[0-9]*; /* Arithmos Alla Den Xekina Me 0 */
 LINE_COMMENT: '$' ~[\r\n]* -> skip;
 WS : [ \t\r\n\f]+ -> skip ;
 
+
 /*
 EOL : ('\r'|'\n')+
     ;
 ErrChar
   : .
   ;
-
 */

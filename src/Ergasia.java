@@ -10,10 +10,16 @@ public class Ergasia {
         CommonTokenStream tokens = new CommonTokenStream( lexer );
         ErgasiaParser parser = new ErgasiaParser( tokens );
         ParseTree tree = parser.program();
-        ergListenerBaseVst elekt = new ergListenerBaseVst();
+        ergListener elekt = new ergListener();
         ParseTreeWalker walker = new ParseTreeWalker();
-        ergListenerBaseVst bstVst = new ergListenerBaseVst();
+        ergListener bstVst = new ergListener();
+
+        //ErgasiaLexer.VOCABULARY.getSymbolicName()
+
         walker.walk(bstVst, tree);
+
+        System.out.println("Array of Variables");
+
         for (Metablites item :bstVst.metablitesHashMap.values())
             System.out.println(item.ID + ", " + item.typosMetablitis);
         //ParseTreeWalker walker = new ParseTreeWalker();
