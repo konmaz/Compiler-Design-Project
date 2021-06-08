@@ -1,31 +1,46 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class ergListenerBaseVst extends ErgasiaBaseListener{
-    HashMap<String, ArrayList<String>> dilomenesVar = new HashMap<>();
-    String currentVarType;
+    public HashMap<String, Metablites> metablitesHashMap;
+    LinkedList<typosVarENUM> queue;
     ergListenerBaseVst(){
-        dilomenesVar.put("integer", new ArrayList<>());
-        dilomenesVar.put("real", new ArrayList<>());
+        queue = new LinkedList<>();
+        metablitesHashMap = new HashMap<>();
     }
     public void enterDeclarations(ErgasiaParser.DeclarationsContext ctx) {
+
+
         if (ctx.vars() != null){
-            currentVarType = ctx.type().getText();
-            System.out.printf("Initialize variable/s : %s\t type : %s\n",ctx.vars().getText(), ctx.type().getText());
+            System.out.println("mpika");
+            System.out.println(ctx.type().getText());
+            if (ctx.type().getText().equalsIgnoreCase("integer"))
+                queue.add(typosVarENUM.typINTEGER);
+            if (ctx.type().getText().equalsIgnoreCase("real"))
+                queue.add(typosVarENUM.typREAL);
+            //System.out.printf("Initialize variable/s : %s\t type : %s\n",ctx.vars().getText(), ctx.type().getText());
         }
     }
-
     public void exitDeclarations(ErgasiaParser.DeclarationsContext ctx) {
 
         if (ctx.vars() != null) {
-            System.out.println("Exit");
-            System.out.printf("Initialize variable/s : %s\t type : %s\n", ctx.vars().getText(), ctx.type().getText());
+            queue.removeLast();
+            //System.out.println("Exit");
+            //System.out.printf("Initialize variable/s : %s\t type : %s\n", ctx.vars().getText(), ctx.type().getText());
 
         }
     }
-    public void exitUndef_variable(ErgasiaParser.Undef_variableContext ctx) {
-        dilomenesVar.get(currentVarType.toLowerCase()).add(ctx.ID().getText());
-        System.out.println(ctx.ID().getText());
+    public void enterUndef_variable(ErgasiaParser.Undef_variableContext ctx) {
+        if (metablitesHashMap.containsKey(ctx.ID().getText())){
+            System.out.println("Το "+ctx.ID().getText()+ " έχει δηλώθεί προηγουμένως ως "+ metablitesHashMap.get(ctx.ID().getText()).typosMetablitis);
+            System.out.println("Η διαδικασία σταμάταει...");
+            System.exit(-1);
+        }
+        metablitesHashMap.put(ctx.ID().getText(), new Metablites(ctx.ID().getText(), queue.getLast()));
+        //dilomenesVar.get(currentVarType.toLowerCase()).add(ctx.ID().getText());
+        //System.out.println(ctx.ID().getText());
+
     }
     /*
     @Override public Integer visitUndef_variable(ErgasiaParser.Undef_variableContext ctx) {

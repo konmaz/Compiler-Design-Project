@@ -14,7 +14,8 @@ public class Ergasia {
         ParseTreeWalker walker = new ParseTreeWalker();
         ergListenerBaseVst bstVst = new ergListenerBaseVst();
         walker.walk(bstVst, tree);
-
+        for (Metablites item :bstVst.metablitesHashMap.values())
+            System.out.println(item.ID + ", " + item.typosMetablitis);
         //ParseTreeWalker walker = new ParseTreeWalker();
         //walker.walk(elekt, tree );
 

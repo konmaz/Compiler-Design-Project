@@ -1,4 +1,4 @@
 integer x,y,z,k(10)
-x = 10+5+9
+real p,t,x
 return
 end
