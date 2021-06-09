@@ -20,14 +20,14 @@ integer i1,j1,k1,m(100) complex u
 if (yy(i)) goto 1000
 u = -(1.:-3.2)
 if (a.gt.0B.01.and.b(0,a*k**i).and.g(m(i)).lt.x(i,i+2,g(j))) then
-   integer z,a(10)
-   101 read z,a(z)
-   105 if (z .gt. 0 .and. z .le. 6) goto z,(100,101,102,103,104,105)
+integer z,a(10)
+101 read z,a(z)
+105 if (z .gt. 0 .and. z .le. 6) goto z,(100,101,102,103,104,105)
 else
-   integer i logical l(1000)
-   do i=1,N,2
-      1000 l(i) = x(i,g(i),g(j)).le.im(u)
-   enddo
+integer i logical l(1000)
+do i=1,N,2
+1000 l(i) = x(i,g(i),g(j)).le.im(u)
+enddo
 endif
 102 call try_me_(x(i,int(ll),z),m,car(al))
 103 if (y(g(y(z-2)))+a) 100,1000,10
@@ -39,7 +39,7 @@ end
 subroutine try_me_(integer n,a(n), logical l)
 integer i
 do i=1,n
-   if (l .and. a(i) .gt. 0) a(i) = a(i) - i
+if (l .and. a(i) .gt. 0) a(i) = a(i) - i
 enddo
 return
 end
@@ -47,11 +47,11 @@ real function y(integer n)
 integer i,j
 if (n .gt. 0) then y = n
 else
-   j = 0
-   do i=1,n+1,n/2
-      j = j+i
-   enddo
-   y = j
+j = 0
+do i=1,n+1,n/2
+j = j+i
+enddo
+y = j
 endif
 return
 end

@@ -1,10 +1,11 @@
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
+import java.util.ArrayList;
+
 public class Ergasia {
     public static void main( String[] args) throws Exception
     {
-
 
         ErgasiaLexer lexer = new ErgasiaLexer( new ANTLRFileStream(args[0]));
         CommonTokenStream tokens = new CommonTokenStream( lexer );
@@ -16,12 +17,21 @@ public class Ergasia {
 
         //ErgasiaLexer.VOCABULARY.getSymbolicName()
 
-        walker.walk(bstVst, tree);
+        //walker.walk(bstVst, tree);
+        //System.out.println("Symbol Table (Arrays)");
 
-        System.out.println("Array of Variables");
+        //for (Metablites item :bstVst.metablitesHashMap.values())
+            //System.out.println(item.ID + ", " + item.typosMetablitis);
 
-        for (Metablites item :bstVst.metablitesHashMap.values())
-            System.out.println(item.ID + ", " + item.typosMetablitis);
+        System.out.println("------------------------");
+        MetaglotistisC metaglotistisCObj = new MetaglotistisC();
+        walker.walk(metaglotistisCObj, tree);
+
+        for (ArrayList<Variable> scope : metaglotistisCObj.variablesHashMap.values())
+            for (Variable item : scope)
+                System.out.println(item);
+
+
         //ParseTreeWalker walker = new ParseTreeWalker();
         //walker.walk(elekt, tree );
 

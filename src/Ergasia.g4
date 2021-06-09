@@ -1,8 +1,8 @@
 grammar Ergasia;
 
-program : body subprograms;
+program : body END  subprograms;
 
-body : declarations statements ;
+body : declarations statements;
 
 declarations : declarations type vars | declarations COMMON cblock_list | declarations DATA vals | /* epsilon */ ;
 
@@ -116,7 +116,7 @@ read_item : variable
 iter_space : expression COMMA expression step;
 
 step : COMMA expression
-| /* e */;
+|/* e */;
 
 write_list : write_list COMMA write_item| write_item;
 

@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class ergListener extends ErgasiaBaseListener{
-    public HashMap<String, Metablites> metablitesHashMap;
+    public HashMap<String, Variable> metablitesHashMap;
     HashSet<String> builtInFunctions = new HashSet<>(Arrays.asList("CAR", "CDR", "CADR", "CDDR", "CDDDR"));
     LinkedList<typosVarENUM> queue;
     ergListener(){
@@ -39,7 +39,7 @@ public class ergListener extends ErgasiaBaseListener{
             System.out.println("Η μεταβλητή '"+ctx.ID().getText()+ "' έχει δηλώθεί προηγουμένως ως "+ metablitesHashMap.get(ctx.ID().getText()).typosMetablitis);
             //System.exit(-1);
         }
-        metablitesHashMap.put(ctx.ID().getText(), new Metablites(ctx.ID().getText(), queue.getLast()));
+        metablitesHashMap.put(ctx.ID().getText(), new Variable(ctx.ID().getText(), queue.getLast(), "",-1));
         //dilomenesVar.get(currentVarType.toLowerCase()).add(ctx.ID().getText());
         //System.out.println(ctx.ID().getText());
 
