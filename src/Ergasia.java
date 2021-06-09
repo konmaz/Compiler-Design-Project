@@ -23,6 +23,7 @@ public class Ergasia {
         //for (Metablites item :bstVst.metablitesHashMap.values())
             //System.out.println(item.ID + ", " + item.typosMetablitis);
 
+        System.out.println("ArraysVariables");
         System.out.println("------------------------");
         MetaglotistisC metaglotistisCObj = new MetaglotistisC();
         walker.walk(metaglotistisCObj, tree);
@@ -30,6 +31,7 @@ public class Ergasia {
         for (ArrayList<Variable> scope : metaglotistisCObj.variablesHashMap.values())
             for (Variable item : scope)
                 System.out.println(item);
+
 
 
         //ParseTreeWalker walker = new ParseTreeWalker();

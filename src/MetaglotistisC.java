@@ -1,3 +1,5 @@
+import org.antlr.v4.runtime.Token;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -7,6 +9,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     boolean insideBody;
     String currentScope = "body";
     LinkedList<typosVarENUM> queueForDeclarations;
+    private boolean insideParameters = false;
 
     public MetaglotistisC(){
         queueForDeclarations = new LinkedList<>();
@@ -20,7 +23,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     public void enterDeclarations(ErgasiaParser.DeclarationsContext ctx) {
 
         if (ctx.vars() != null){
-            queueForDeclarations.add(typosVarENUM.typVOID);
+            //queueForDeclarations.add(typosVarENUM.typVOID);
             //System.out.println("mpika");
             //System.out.println(ctx.type().getText());
             if (ctx.type().getText().equalsIgnoreCase("integer"))
@@ -46,20 +49,28 @@ public class MetaglotistisC extends ErgasiaBaseListener {
           //  System.out.println("Η μεταβλητή '"+ctx.ID().getText()+ "' έχει δηλώθεί προηγουμένως ως "+ variablesHashMap.get(ctx.ID().getText()));
             //System.exit(-1);
         //}
-
-        variablesHashMap.get(currentScope).add(new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), currentScope,-1));
+        if (!insideParameters)
+            variablesHashMap.get(currentScope).add(new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), currentScope,-1));
         //dilomenesVar.get(currentVarType.toLowerCase()).add(ctx.ID().getText());
         //System.out.println(ctx.ID().getText());
-
     }
 
     public void enterHeader(ErgasiaParser.HeaderContext ctx) {
         currentScope = ctx.ID().getSymbol().getText();
         if (!variablesHashMap.containsKey(currentScope))
             variablesHashMap.put(currentScope, new ArrayList<>());
+
     }
 
     public void enterAssignment(ErgasiaParser.AssignmentContext ctx) {
         String assignmentID =  ctx.variable().ID().getText();
     }
+
+    public void enterFormal_parameters(ErgasiaParser.Formal_parametersContext ctx){
+        insideParameters = true;
+    }
+    public void exitFormal_parameters(ErgasiaParser.Formal_parametersContext ctx){
+        insideParameters = false;
+    };
+
 }
