@@ -2,10 +2,12 @@ import org.antlr.v4.runtime.Token;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class MetaglotistisC extends ErgasiaBaseListener {
-    public HashMap<String, ArrayList<Variable>> variablesHashMap; // A hash map that contains <key:CurrentScope, Variasbles
+    public HashMap<String, LinkedList<Variable>> variablesHashMap; // A hash map that contains <key:CurrentScope, A list of function objects
+    public HashSet<Function> functionHashSet; // A hash set that contains all the function objects
     boolean insideBody;
     String currentScope = "body";
     LinkedList<typosVarENUM> queueForDeclarations;
@@ -14,7 +16,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     public MetaglotistisC(){
         queueForDeclarations = new LinkedList<>();
         variablesHashMap = new HashMap<>();
-        variablesHashMap.put("body", new ArrayList<>());
+        variablesHashMap.put("body", new LinkedList<>());
     }
 
     public void enterBody(ErgasiaParser.BodyContext ctx) { this.insideBody = true;}
@@ -51,6 +53,8 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         //}
         if (!insideParameters)
             variablesHashMap.get(currentScope).add(new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), currentScope,-1));
+        else
+            functionsHashMap.get(currentScope);
         //dilomenesVar.get(currentVarType.toLowerCase()).add(ctx.ID().getText());
         //System.out.println(ctx.ID().getText());
     }
@@ -58,8 +62,9 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     public void enterHeader(ErgasiaParser.HeaderContext ctx) {
         currentScope = ctx.ID().getSymbol().getText();
         if (!variablesHashMap.containsKey(currentScope))
-            variablesHashMap.put(currentScope, new ArrayList<>());
-
+            variablesHashMap.put(currentScope, new LinkedList<>());
+        if (!functionsHashMap.containsKey(currentScope))
+            functionsHashMap.put(currentScope, new LinkedList<>());
     }
 
     public void enterAssignment(ErgasiaParser.AssignmentContext ctx) {

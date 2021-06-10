@@ -2,6 +2,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Ergasia {
     public static void main( String[] args) throws Exception
@@ -23,12 +24,12 @@ public class Ergasia {
         //for (Metablites item :bstVst.metablitesHashMap.values())
             //System.out.println(item.ID + ", " + item.typosMetablitis);
 
-        System.out.println("ArraysVariables");
+        System.out.println("Symbol Table - Variables");
         System.out.println("------------------------");
         MetaglotistisC metaglotistisCObj = new MetaglotistisC();
         walker.walk(metaglotistisCObj, tree);
 
-        for (ArrayList<Variable> scope : metaglotistisCObj.variablesHashMap.values())
+        for (LinkedList<Variable> scope : metaglotistisCObj.variablesHashMap.values())
             for (Variable item : scope)
                 System.out.println(item);
 
