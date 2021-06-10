@@ -1,13 +1,13 @@
 import org.antlr.v4.runtime.Token;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 
 public class MetaglotistisC extends ErgasiaBaseListener {
     public HashMap<String, LinkedList<Variable>> variablesHashMap; // A hash map that contains <key:CurrentScope, A list of function objects
-    public HashSet<Function> functionHashSet; // A hash set that contains all the function objects
+    public HashMap<String, Function> functionsHashMap; // A hash map that contains <key:Name of function, A list of function objects
     boolean insideBody;
     String currentScope = "body";
     LinkedList<typosVarENUM> queueForDeclarations;
@@ -17,6 +17,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         queueForDeclarations = new LinkedList<>();
         variablesHashMap = new HashMap<>();
         variablesHashMap.put("body", new LinkedList<>());
+        functionsHashMap = new HashMap<>();
     }
 
     public void enterBody(ErgasiaParser.BodyContext ctx) { this.insideBody = true;}
@@ -28,15 +29,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
             //queueForDeclarations.add(typosVarENUM.typVOID);
             //System.out.println("mpika");
             //System.out.println(ctx.type().getText());
-            if (ctx.type().getText().equalsIgnoreCase("integer"))
-                queueForDeclarations.add(typosVarENUM.typINTEGER);
-            else if (ctx.type().getText().equalsIgnoreCase("real"))
-                queueForDeclarations.add(typosVarENUM.typREAL);
-            else if (ctx.type().getText().equalsIgnoreCase("character"))
-                queueForDeclarations.add(typosVarENUM.typCHARACTER);
-            else if (ctx.type().getText().equalsIgnoreCase("logical"))
-                queueForDeclarations.add(typosVarENUM.typLOGICAL);
-            //System.out.printf("Initialize variable/s : %s\t type : %s\n",ctx.vars().getText(), ctx.type().getText());
+            queueForDeclarations.add(enumTools.getEnumFromString(ctx.type().getText()));
         }
     }
 
@@ -53,8 +46,8 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         //}
         if (!insideParameters)
             variablesHashMap.get(currentScope).add(new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), currentScope,-1));
-        else
-            functionsHashMap.get(currentScope);
+        else // insideParameters == True
+            functionsHashMap.get(currentScope).addFunctionArgument(new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), currentScope,-1));
         //dilomenesVar.get(currentVarType.toLowerCase()).add(ctx.ID().getText());
         //System.out.println(ctx.ID().getText());
     }
@@ -63,8 +56,14 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         currentScope = ctx.ID().getSymbol().getText();
         if (!variablesHashMap.containsKey(currentScope))
             variablesHashMap.put(currentScope, new LinkedList<>());
+        typosVarENUM functionReturnType;
+        if (ctx.type() != null){
+            functionReturnType = enumTools.getEnumFromString(ctx.type().getText());
+        }else {
+            functionReturnType = typosVarENUM.typVOID;
+        }
         if (!functionsHashMap.containsKey(currentScope))
-            functionsHashMap.put(currentScope, new LinkedList<>());
+            functionsHashMap.put(currentScope, new Function(currentScope, functionReturnType)); // TODO EDO NA BALEIS TON TYPO TOU RETURN TOU FUNCTION OK TO EBALA
     }
 
     public void enterAssignment(ErgasiaParser.AssignmentContext ctx) {
@@ -72,9 +71,14 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     }
 
     public void enterFormal_parameters(ErgasiaParser.Formal_parametersContext ctx){
+        System.out.println(ctx.getText());
+        if (ctx.vars() != null)
+            queueForDeclarations.add(enumTools.getEnumFromString(ctx.type().getText()));
         insideParameters = true;
     }
     public void exitFormal_parameters(ErgasiaParser.Formal_parametersContext ctx){
+        if(ctx.vars() != null)
+            queueForDeclarations.removeLast();
         insideParameters = false;
     };
 

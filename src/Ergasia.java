@@ -24,14 +24,32 @@ public class Ergasia {
         //for (Metablites item :bstVst.metablitesHashMap.values())
             //System.out.println(item.ID + ", " + item.typosMetablitis);
 
-        System.out.println("Symbol Table - Variables");
-        System.out.println("------------------------");
+
+
+
+
+
+
+
+
+
+
+
         MetaglotistisC metaglotistisCObj = new MetaglotistisC();
         walker.walk(metaglotistisCObj, tree);
 
-        for (LinkedList<Variable> scope : metaglotistisCObj.variablesHashMap.values())
-            for (Variable item : scope)
-                System.out.println(item);
+
+//        System.out.println("Symbol Table - Variables");
+//        System.out.println("------------------------");
+//
+//        for (LinkedList<Variable> scope : metaglotistisCObj.variablesHashMap.values())
+//            for (Variable item : scope)
+//                System.out.println(item);
+
+        System.out.println("Symbol Table - Functions");
+        for (Function functionObj: metaglotistisCObj.functionsHashMap.values())
+                System.out.println(functionObj);
+
 
 
 

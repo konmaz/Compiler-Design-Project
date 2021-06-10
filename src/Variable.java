@@ -1,14 +1,7 @@
 import java.util.LinkedList;
 
-enum typosVarENUM {
-    typINTEGER,
-    typREAL,
-    typLOGICAL,
-    typCHARACTER,
-    typVOID
-}
 public class Variable {
-    String ID; //Onoma Metablitis
+    public String ID; //Onoma Metablitis
     typosVarENUM typosMetablitis;
     String scope;
     int dimensions; // 1D,2D,3D...
