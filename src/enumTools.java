@@ -11,4 +11,16 @@ public class enumTools {
             return typosVarENUM.typLOGICAL;
         return typosVarENUM.typVOID;
     }
+    public static String ENUM2Clike(typosVarENUM typosVarENUMObj){
+        if(typosVarENUMObj == typosVarENUM.typINTEGER)
+            return "int";
+        if(typosVarENUMObj == typosVarENUM.typREAL)
+            return "float";
+        if(typosVarENUMObj == typosVarENUM.typCHARACTER)
+            return "char";
+        if(typosVarENUMObj == typosVarENUM.typLOGICAL)
+            return "boolean";
+        return "void";
+    }
 }
+

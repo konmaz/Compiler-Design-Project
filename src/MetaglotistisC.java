@@ -8,7 +8,7 @@ import java.util.LinkedList;
 public class MetaglotistisC extends ErgasiaBaseListener {
     public HashMap<String, LinkedList<Variable>> variablesHashMap; // A hash map that contains <key:CurrentScope, A list of function objects
     public HashMap<String, Function> functionsHashMap; // A hash map that contains <key:Name of function, A list of function objects
-    boolean insideBody;
+    Function lastFunctionObj = null;
     String currentScope = "body";
     LinkedList<typosVarENUM> queueForDeclarations;
     private boolean insideParameters = false;
@@ -20,8 +20,17 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         functionsHashMap = new HashMap<>();
     }
 
-    public void enterBody(ErgasiaParser.BodyContext ctx) { this.insideBody = true;}
-    public void exitBody(ErgasiaParser.BodyContext ctx) { this.insideBody = false;}
+    public void enterBody(ErgasiaParser.BodyContext ctx) {
+        if (currentScope.equalsIgnoreCase("body"))
+            System.out.println("int main() {");
+        else
+        {System.out.println(enumTools.ENUM2Clike(lastFunctionObj.returnType) + " " + lastFunctionObj.name + "()");}
+        //System.out.println(currentScope);
+    }
+    public void exitBody(ErgasiaParser.BodyContext ctx) {
+
+        System.out.println("}");
+    }
 
     public void enterDeclarations(ErgasiaParser.DeclarationsContext ctx) {
 
@@ -62,8 +71,11 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         }else {
             functionReturnType = typosVarENUM.typVOID;
         }
-        if (!functionsHashMap.containsKey(currentScope))
-            functionsHashMap.put(currentScope, new Function(currentScope, functionReturnType)); // TODO EDO NA BALEIS TON TYPO TOU RETURN TOU FUNCTION OK TO EBALA
+        if (!functionsHashMap.containsKey(currentScope)){
+            lastFunctionObj = new Function(currentScope, functionReturnType);
+            functionsHashMap.put(currentScope, lastFunctionObj); // TODO EDO NA BALEIS TON TYPO TOU RETURN TOU FUNCTION OK TO EBALA
+        }
+
     }
 
     public void enterAssignment(ErgasiaParser.AssignmentContext ctx) {
@@ -71,7 +83,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     }
 
     public void enterFormal_parameters(ErgasiaParser.Formal_parametersContext ctx){
-        System.out.println(ctx.getText());
+        //System.out.println(ctx.getText());
         if (ctx.vars() != null)
             queueForDeclarations.add(enumTools.getEnumFromString(ctx.type().getText()));
         insideParameters = true;

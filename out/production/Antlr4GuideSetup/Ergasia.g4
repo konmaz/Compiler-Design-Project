@@ -177,17 +177,18 @@ ID :([a-zA-Z][a-zA-Z'"'0-9]*)|([a-zA-Z]'_'[a-zA-Z'"'0-9]*'_')|([a-zA-Z][a-zA-Z'"
 /*ICONST3: ([1-9]+[0-9]*(([0X]?[1-9]+[0-9]*[0A_0C_0D_0E_0F][1-9]+[0-9]*)|([B_b][1]+[0-1]*)|)?)|[0]; */
 
 
-fragment HEX_CHARS:[A-F]|[a-f];
+
 //ICONST: ([0-9]+|((([0][X_x]AADM0)|[0])[A_C_D_E_F][0-9]*[A_C_D_E_F]*[0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0]*);
 //ICONST: ([0-9]*|((([0][X_x]AADM0)|[0])[A_C_D_E_F][0-9]*[A_C_D_E_F]*[0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0]*);
-ICONST :
-[0]
-|[1-9]+[0-9]*
-|[0][Xx][1-9]+[0-9]*
-|[0][Xx]HEX_CHARS+[1-9]+[0-9]*
-|[0][Xx][1-9]+[0-9]*HEX_CHARS+[0-9]+
-|[0][Oo][1-7]+[0-7]*
-|[0][Bb][1]+[0-1]*;
+
+//ICONST :
+//[0]
+//|[1-9]+[0-9]*
+//|[0][Xx][1-9]+[0-9]*
+//|[0][Xx]HEXCHARS+[1-9]+[0-9]*
+//|[0][Xx][1-9]+[0-9]*HEXCHARS+[0-9]+
+//|[0][Oo][1-7]+[0-7]*
+//|[0][Bb][1]+[0-1]*;
 
 /*
 RCONST:
@@ -212,12 +213,81 @@ RCONST:(
     ;
 
 */
-fragment NUM:[0-9];
-fragment HEX_DIGITS: '0x' ('0'..'9' | 'a'..'f' | 'A'..'F')+;
-fragment EXPONENT : ('e'|'E') ADDOP? NUM+;
-RCONST:[ABC];
+fragment HEXCHARS:[A-F]|[a-f];
+fragment HEXNUMBERS :NUM*HEXCHARS*NUM*HEXCHARS*;
+fragment ESCAPE_CHARS : '\\'('n'|'f'|'t'|'r'|'b'|'b'|'v');
 
-CCONST:AUTAKI[ -~]AUTAKI; /* EDO ISOS YPARXEI THEMA */
+fragment BINARYNUMBERS :
+(
+    '0'('B'|'b')
+    [1]+[0-1]*
+);
+fragment OCTABNUMBERS : // base 8
+(
+    '0'('O'|'o')
+    [1-7]+[0-7]*
+);
+
+fragment BINARY_WHOLE : ('OB'|'Ob') [1]+[0-1]*;
+fragment NUM:[0-9];
+fragment EXPONENT : ('e'|'E') ADDOP? NUM+;
+
+
+
+ICONST :
+(
+    ('0')
+    |
+    ([1-9]+[0-9]*)
+    |
+    (   ('0'('X'|'x'))
+        HEXNUMBERS
+    )
+    |
+        BINARYNUMBERS
+    |
+       OCTABNUMBERS
+);
+
+RCONST://('0X'(HEX_NUMBERS))|
+(
+    (
+        (NUM* DOT NUM+)
+        |
+        (NUM+ DOT? NUM*)
+    )
+    (EXPONENT?)
+)
+|
+(
+    (
+        ('0'('X'|'x'|'O'|'o'))
+        HEXNUMBERS
+        DOT
+        HEXNUMBERS
+    )
+    |
+    (
+        ('0B'|'0b')
+        [0-1]*
+        DOT
+        [0-1]*
+    )
+
+)
+//'0'[X]{1}[HEX_NUMBERS*][DOT][HEX_NUMBERS*]
+
+;
+fragment A:'A'|'a';
+fragment B:'B'|'b';
+fragment C:'C'|'c';
+fragment D:'D'|'d';
+fragment E:'E'|'e';
+fragment F:'F'|'f';
+fragment X:'X'|'x';
+
+
+CCONST:AUTAKI([ -~]|ESCAPE_CHARS)AUTAKI; /* EDO ISOS YPARXEI THEMA */
 SCONST:DOUBLE_AUTAKI[ -~]*DOUBLE_AUTAKI; /* EDO ISOS YPARXEI THEMA */
 
 AUTAKI:'\'';

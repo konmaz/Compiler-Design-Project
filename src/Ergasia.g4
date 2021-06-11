@@ -217,7 +217,7 @@ fragment HEXCHARS:[A-F]|[a-f];
 fragment HEXNUMBERS :NUM*HEXCHARS*NUM*HEXCHARS*;
 fragment ESCAPE_CHARS : '\\'('n'|'f'|'t'|'r'|'b'|'b'|'v');
 
-fragment BINARYNUMBERS : // base 2
+fragment BINARYNUMBERS :
 (
     '0'('B'|'b')
     [1]+[0-1]*
@@ -230,7 +230,6 @@ fragment OCTABNUMBERS : // base 8
 
 fragment BINARY_WHOLE : ('OB'|'Ob') [1]+[0-1]*;
 fragment NUM:[0-9];
-//fragment HEX_DIGITS: '0x' ('0'..'9' | 'a'..'f' | 'A'..'F')+;
 fragment EXPONENT : ('e'|'E') ADDOP? NUM+;
 
 
