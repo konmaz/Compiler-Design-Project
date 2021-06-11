@@ -252,13 +252,12 @@ ICONST :
 
 RCONST://('0X'(HEX_NUMBERS))|
 (
-    (NUM* DOT NUM+)
-    |
-    (NUM+ DOT? NUM*)
-    |
-    (NUM+ EXPONENT?)
-    |
-    (DOT NUM+ EXPONENT?)
+    (
+        (NUM* DOT NUM+)
+        |
+        (NUM+ DOT? NUM*)
+    )
+    (EXPONENT?)
 )
 |
 (
