@@ -177,7 +177,7 @@ ID :([a-zA-Z][a-zA-Z'"'0-9]*)|([a-zA-Z]'_'[a-zA-Z'"'0-9]*'_')|([a-zA-Z][a-zA-Z'"
 /*ICONST3: ([1-9]+[0-9]*(([0X]?[1-9]+[0-9]*[0A_0C_0D_0E_0F][1-9]+[0-9]*)|([B_b][1]+[0-1]*)|)?)|[0]; */
 
 
-HEX_CHARS:[A-F]|[a-f];
+fragment HEX_CHARS:[A-F]|[a-f];
 //ICONST: ([0-9]+|((([0][X_x]AADM0)|[0])[A_C_D_E_F][0-9]*[A_C_D_E_F]*[0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0]*);
 //ICONST: ([0-9]*|((([0][X_x]AADM0)|[0])[A_C_D_E_F][0-9]*[A_C_D_E_F]*[0-9]*)|([0][o][1-7]+[0-9]*)|([0][B_b][1]+[0-1]*)|[0]*);
 ICONST :
@@ -199,18 +199,23 @@ RCONST:
 ;
 */
 
-
+/*
 RCONST:(
     ([0-9]*DOT[0-9]*)|
     ([0-9]*DOT?[0-9]+[e_E]ADDOP?[0-9]+)|
-    ([0][X_x_A_a][0-9]+)|
-    ([0][X_x_A_a_O_ο][X_x_A_a]*[0-9]*DOT[0-9]*())|
-    ([0][B_b][0-1]*DOT[0-1]*)
-    )|
+    ([0][X_x_A][0-9]+)|
+    ([0][X_x_A_O][X_x_A]*[0-9]*DOT[0-9]*)|
+    ([0][B_b][0-1]*DOT[0-1]*))|
     ([0-9]+DOT?[e]ADDOP?[0-9]+)
+
+
     ;
 
-
+*/
+fragment NUM:[0-9];
+fragment HEX_DIGITS: '0x' ('0'..'9' | 'a'..'f' | 'A'..'F')+;
+fragment EXPONENT : ('e'|'E') ADDOP? NUM+;
+RCONST:[ABC];
 
 CCONST:AUTAKI[ -~]AUTAKI; /* EDO ISOS YPARXEI THEMA */
 SCONST:DOUBLE_AUTAKI[ -~]*DOUBLE_AUTAKI; /* EDO ISOS YPARXEI THEMA */
