@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Function {
@@ -19,9 +20,9 @@ public class Function {
     @Override
     public String toString() {
         StringBuilder nameOfVariables = new StringBuilder();
-        nameOfVariables.append('[');
+        nameOfVariables.append("[");
         for (Variable item : functionArguments){
-            nameOfVariables.append(item.typosMetablitis+ ":"+item.ID+", ");
+            nameOfVariables.append(item.typosMetablitis).append(" ").append(Arrays.toString(item.dimensions)).append(":").append(item.ID).append(", \t");
         }
         nameOfVariables.append(']');
 

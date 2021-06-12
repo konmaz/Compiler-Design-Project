@@ -50,7 +50,14 @@ public class Ergasia {
         for (Function functionObj: metaglotistisCObj.functionsHashMap.values())
                 System.out.println(functionObj);
 
+        System.out.println("---");
 
+        for (Function key : metaglotistisCObj.entoles.keySet()){
+            System.out.println(key.name + "{");
+            for (String strItem : metaglotistisCObj.entoles.get(key))
+                System.out.println("\t" + strItem + ";");
+            System.out.println("}");
+        }
 
 
         //ParseTreeWalker walker = new ParseTreeWalker();

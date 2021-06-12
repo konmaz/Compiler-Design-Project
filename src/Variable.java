@@ -4,19 +4,19 @@ import java.util.Objects;
 
 public class Variable {
     public String ID; //Onoma Metablitis
-    typosVarENUM typosMetablitis;
-    String scope;
-    int dimensions[]; // 1D,2D,3D...
-    boolean isGlobal;
-    String initialValue;
+    public typosVarENUM typosMetablitis;
+    public String scope;
+    public String[] dimensions; // 1D,2D,3D...
+    public boolean isGlobal;
+    public LinkedList<String> initialValues;
 
-    public Variable(String name, typosVarENUM tp, String scope, int dimensions[]) {
+    public Variable(String name, typosVarENUM tp, String scope, String[] dimensions) {
         this.ID = name;
         this.typosMetablitis = tp;
         this.scope = scope;
         this.dimensions = dimensions;
         this.isGlobal = false;
-        this.initialValue = null;
+        this.initialValues = new LinkedList<String>();
         /*
         if (megethosDiastaseon.length == 0)
             this.thesisPinaka = -1;
@@ -42,7 +42,7 @@ public class Variable {
                 ",\n\t dimensions=" + Arrays.toString(dimensions) +
                 ",\n\t is Array=" + this.isArray() +
                 ",\n\t isGlobal=" + isGlobal +
-                ",\n\t initialValue=" + initialValue +
+                ",\n\t initialValue=" + Arrays.toString(initialValues.toArray())+
                 '}';
     }
 
