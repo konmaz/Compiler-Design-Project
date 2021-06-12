@@ -37,18 +37,18 @@ public class Ergasia {
 
         MetaglotistisC metaglotistisCObj = new MetaglotistisC();
         walker.walk(metaglotistisCObj, tree);
+        System.out.println("------------------------");
+        System.out.println("------------------------");
+        System.out.println("Symbol Table - Variables");
+        System.out.println("------------------------");
 
+        for (LinkedList<Variable> scope : metaglotistisCObj.variablesHashMap.values())
+            for (Variable item : scope)
+                System.out.println(item);
 
-//        System.out.println("Symbol Table - Variables");
-//        System.out.println("------------------------");
-//
-//        for (LinkedList<Variable> scope : metaglotistisCObj.variablesHashMap.values())
-//            for (Variable item : scope)
-//                System.out.println(item);
-//
-//        System.out.println("Symbol Table - Functions");
-//        for (Function functionObj: metaglotistisCObj.functionsHashMap.values())
-//                System.out.println(functionObj);
+        System.out.println("Symbol Table - Functions");
+        for (Function functionObj: metaglotistisCObj.functionsHashMap.values())
+                System.out.println(functionObj);
 
 
 

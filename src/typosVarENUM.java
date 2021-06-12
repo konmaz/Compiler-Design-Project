@@ -3,5 +3,6 @@ enum typosVarENUM {
     typREAL,
     typLOGICAL,
     typCHARACTER,
+    typCOMPLEX,
     typVOID
 }

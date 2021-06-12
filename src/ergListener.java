@@ -39,7 +39,7 @@ public class ergListener extends ErgasiaBaseListener{
             System.out.println("Η μεταβλητή '"+ctx.ID().getText()+ "' έχει δηλώθεί προηγουμένως ως "+ metablitesHashMap.get(ctx.ID().getText()).typosMetablitis);
             //System.exit(-1);
         }
-        metablitesHashMap.put(ctx.ID().getText(), new Variable(ctx.ID().getText(), queue.getLast(), "",-1));
+        metablitesHashMap.put(ctx.ID().getText(), new Variable(ctx.ID().getText(), queue.getLast(), "",null));
         //dilomenesVar.get(currentVarType.toLowerCase()).add(ctx.ID().getText());
         //System.out.println(ctx.ID().getText());
 

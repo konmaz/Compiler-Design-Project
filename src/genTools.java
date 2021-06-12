@@ -1,4 +1,6 @@
-public class enumTools {
+import org.stringtemplate.v4.ST;
+
+public class genTools {
 
     public static typosVarENUM getEnumFromString(String x){
         if (x.equalsIgnoreCase("integer"))
@@ -22,5 +24,6 @@ public class enumTools {
             return "boolean";
         return "void";
     }
+
 }
 

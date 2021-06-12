@@ -1,11 +1,4 @@
-integer x,z
-z = .true.
-end
-subroutine try_me_(integer n)
-real y
-return
-end
-real list function LL (integer y, real list w)
-real y
-return
+integer c(100,10)
+integer e(5)
+x = 1
 end

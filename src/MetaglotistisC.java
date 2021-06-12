@@ -1,7 +1,4 @@
-import org.antlr.v4.runtime.Token;
-
-import javax.swing.*;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -24,7 +21,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         if (currentScope.equalsIgnoreCase("body"))
             System.out.println("int main() {");
         else
-        {System.out.println(enumTools.ENUM2Clike(lastFunctionObj.returnType) + " " + lastFunctionObj.name + "()");}
+        {System.out.println(genTools.ENUM2Clike(lastFunctionObj.returnType) + " " + lastFunctionObj.name + "() {");}
         //System.out.println(currentScope);
     }
     public void exitBody(ErgasiaParser.BodyContext ctx) {
@@ -38,7 +35,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
             //queueForDeclarations.add(typosVarENUM.typVOID);
             //System.out.println("mpika");
             //System.out.println(ctx.type().getText());
-            queueForDeclarations.add(enumTools.getEnumFromString(ctx.type().getText()));
+            queueForDeclarations.add(genTools.getEnumFromString(ctx.type().getText()));
         }
     }
 
@@ -53,10 +50,20 @@ public class MetaglotistisC extends ErgasiaBaseListener {
           //  System.out.println("Η μεταβλητή '"+ctx.ID().getText()+ "' έχει δηλώθεί προηγουμένως ως "+ variablesHashMap.get(ctx.ID().getText()));
             //System.exit(-1);
         //}
-        if (!insideParameters)
-            variablesHashMap.get(currentScope).add(new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), currentScope,-1));
+        int []dimensions = null;
+        if (ctx.dims() != null){
+            System.out.println();
+            //dimensions = ctx.dims().getText().split(",");
+            System.out.println(Arrays.toString(dimensions));
+            dimensions = Arrays.stream(ctx.dims().getText().split(",")).mapToInt(Integer::parseInt).toArray();
+
+        }
+        if (!insideParameters){
+            variablesHashMap.get(currentScope).add(new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), currentScope,dimensions));
+            System.out.println("\t"+ genTools.ENUM2Clike(queueForDeclarations.getLast())+" "+ctx.ID().getText()+";");
+        }
         else // insideParameters == True
-            functionsHashMap.get(currentScope).addFunctionArgument(new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), currentScope,-1));
+            functionsHashMap.get(currentScope).addFunctionArgument(new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), currentScope, dimensions));
         //dilomenesVar.get(currentVarType.toLowerCase()).add(ctx.ID().getText());
         //System.out.println(ctx.ID().getText());
     }
@@ -67,7 +74,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
             variablesHashMap.put(currentScope, new LinkedList<>());
         typosVarENUM functionReturnType;
         if (ctx.type() != null){
-            functionReturnType = enumTools.getEnumFromString(ctx.type().getText());
+            functionReturnType = genTools.getEnumFromString(ctx.type().getText());
         }else {
             functionReturnType = typosVarENUM.typVOID;
         }
@@ -85,7 +92,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     public void enterFormal_parameters(ErgasiaParser.Formal_parametersContext ctx){
         //System.out.println(ctx.getText());
         if (ctx.vars() != null)
-            queueForDeclarations.add(enumTools.getEnumFromString(ctx.type().getText()));
+            queueForDeclarations.add(genTools.getEnumFromString(ctx.type().getText()));
         insideParameters = true;
     }
     public void exitFormal_parameters(ErgasiaParser.Formal_parametersContext ctx){
