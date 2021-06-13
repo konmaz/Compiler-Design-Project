@@ -3,8 +3,8 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 public class Function {
-    String name; //Name of function
-    typosVarENUM returnType;
+    final String name; //Name of function
+    final typosVarENUM returnType;
     LinkedList<Variable> functionArguments;
 
     public Function(String name, typosVarENUM returnType) {

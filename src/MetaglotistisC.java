@@ -4,30 +4,36 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class MetaglotistisC extends ErgasiaBaseListener {
-    public HashMap<Function, LinkedList<Variable>> variablesHashMap; // A hash map that contains <key:CurrentScope, A list of function objects
+    public HashMap<Function, LinkedList<Variable>> variablesHashMap; // A hash map that contains <key:Function, A list of variables objects>
     public HashMap<String, Function> functionsHashMap; // A hash map that contains <key:Name of function, A list of function objects
-    Function lastFunctionObj = null;
+
+    Function lastFunctionObj;
 
     LinkedList<typosVarENUM> queueForDeclarations;
+
     private boolean insideParameters = false;
 
-    HashMap<Function, ArrayList<String>> entoles;
+    HashMap<Function, LinkedList<String>> entoles;
 
     Variable currentVariableInData; // gia to data (arxikopoihsh entolon)
 
     public MetaglotistisC(){
         lastFunctionObj = new Function("main", typosVarENUM.typVOID);
+
         entoles = new HashMap<>();
-        entoles.put(lastFunctionObj, new ArrayList<>());
+        entoles.put(lastFunctionObj, new LinkedList<>());
+
         queueForDeclarations = new LinkedList<>();
+
         variablesHashMap = new HashMap<>();
         variablesHashMap.put(lastFunctionObj, new LinkedList<>());
+
         functionsHashMap = new HashMap<>();
+        functionsHashMap.put(lastFunctionObj.name, lastFunctionObj);
     }
 
     public void enterBody(ErgasiaParser.BodyContext ctx) {
         //System.out.print(genTools.enum2CLike(lastFunctionObj.returnType) + " " + lastFunctionObj.name + "(");
-
         //System.out.println(currentScope);
     }
     public void exitBody(ErgasiaParser.BodyContext ctx) {
@@ -35,7 +41,6 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     }
 
     public void enterDeclarations(ErgasiaParser.DeclarationsContext ctx) {
-
         if (ctx.vars() != null){
             //queueForDeclarations.add(typosVarENUM.typVOID);
             //System.out.println("mpika");
@@ -59,11 +64,11 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         if (ctx.dims() != null){
             System.out.println();
             //dimensions = ctx.dims().getText().split(",");
-            System.out.println(Arrays.toString(dimensions));
+            //System.out.println(Arrays.toString(dimensions));
             dimensions = ctx.dims().getText().split(",");
         }
         if (!insideParameters){
-            variablesHashMap.get(lastFunctionObj).add(new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), lastFunctionObj,dimensions));
+            variablesHashMap.get(lastFunctionObj).add(new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), lastFunctionObj, dimensions));
             //System.out.println("\t"+ genTools.enum2CLike(queueForDeclarations.getLast())+" "+ctx.ID().getText()+";");
         }
         else{ // insideParameters == True
@@ -73,27 +78,28 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         //System.out.println(ctx.ID().getText());
     }
 
-    public void enterHeader(ErgasiaParser.HeaderContext ctx) {
+    public void enterHeader(ErgasiaParser.HeaderContext ctx) { // A new function declaration found
         //currentFunctionScope = ctx.ID().getSymbol().getText();
-        if (!variablesHashMap.containsKey(lastFunctionObj))
-            variablesHashMap.put(lastFunctionObj, new LinkedList<>());
-        typosVarENUM functionReturnType;
+        System.out.println("-S-");
+        System.out.println(ctx.ID().getSymbol().getText());
+
+        typosVarENUM functionReturnType = typosVarENUM.typVOID; // Set default return type to VOID
+
         if (ctx.type() != null){
-            functionReturnType = genTools.getEnumFromString(ctx.type().getText());
-        }else {
-            functionReturnType = typosVarENUM.typVOID;
+            functionReturnType = genTools.getEnumFromString(ctx.type().getText()); // Set the return type
         }
-        if (!functionsHashMap.containsKey(lastFunctionObj.name)){
+
+        if (!functionsHashMap.containsKey(ctx.ID().getSymbol().getText())){
             lastFunctionObj = new Function(ctx.ID().getSymbol().getText(), functionReturnType);
             functionsHashMap.put(lastFunctionObj.name, lastFunctionObj);
-            entoles.put(lastFunctionObj, new ArrayList<>());
+            entoles.put(lastFunctionObj, new LinkedList<>());
         }
 
-
-    }
-
-    public void enterAssignment(ErgasiaParser.AssignmentContext ctx) {
-        String assignmentID =  ctx.variable().ID().getText();
+        if (!variablesHashMap.containsKey(lastFunctionObj)) // If variablesHashMap don't contains the function object as key add it
+        {
+            variablesHashMap.put(lastFunctionObj, new LinkedList<>());
+        }
+        System.out.println("-F-");
     }
 
     public void enterFormal_parameters(ErgasiaParser.Formal_parametersContext ctx){
@@ -102,12 +108,12 @@ public class MetaglotistisC extends ErgasiaBaseListener {
             queueForDeclarations.add(genTools.getEnumFromString(ctx.type().getText()));
         insideParameters = true;
     }
+
     public void exitFormal_parameters(ErgasiaParser.Formal_parametersContext ctx){
         if(ctx.vars() != null)
             queueForDeclarations.removeLast();
         insideParameters = false;
     }
-
     public void enterValue_list(ErgasiaParser.Value_listContext ctx) {
         //System.out.println("---");
         int indexOfCurrentChildNode = ctx.getParent().children.indexOf(ctx);
@@ -119,12 +125,15 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         //System.out.println(ctx.values().getText());
         //System.out.println("---");
     }
-    public void enterValue(ErgasiaParser.ValueContext ctx){
 
+    public void enterValue(ErgasiaParser.ValueContext ctx){
         if (currentVariableInData.typosMetablitis.equals(typosVarENUM.typCOMPLEX))
             currentVariableInData.initialValues.add(genTools.complex2CLike(ctx.getText()));
         if (currentVariableInData.typosMetablitis.equals(typosVarENUM.typLOGICAL))
             currentVariableInData.initialValues.add(genTools.boolean2CLike(ctx.getText()));
     }
 
+    public void enterAssignment(ErgasiaParser.AssignmentContext ctx) {
+        //String assignmentID =  ctx.variable().ID().getText();
+    }
 }

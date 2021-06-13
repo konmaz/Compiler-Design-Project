@@ -7,7 +7,6 @@ public class Variable {
     public typosVarENUM typosMetablitis;
     public Function scope;
     public String[] dimensions; // 1D,2D,3D...
-    public boolean isGlobal;
     public LinkedList<String> initialValues;
 
     public Variable(String name, typosVarENUM tp, Function scope, String[] dimensions) {
@@ -15,7 +14,6 @@ public class Variable {
         this.typosMetablitis = tp;
         this.scope = scope;
         this.dimensions = dimensions;
-        this.isGlobal = false;
         this.initialValues = new LinkedList<String>();
         /*
         if (megethosDiastaseon.length == 0)
@@ -26,9 +24,7 @@ public class Variable {
             this.thesisPinaka *= item;
          */
     }
-    public void makeVariableGlobal(){
-        this.isGlobal = true;
-    }
+
     public boolean isArray(){
         return dimensions != null;
     }
@@ -41,7 +37,6 @@ public class Variable {
                 ",\n\t scope='" + scope + '\'' +
                 ",\n\t dimensions=" + Arrays.toString(dimensions) +
                 ",\n\t is Array=" + this.isArray() +
-                ",\n\t isGlobal=" + isGlobal +
                 ",\n\t initialValue=" + Arrays.toString(initialValues.toArray())+
                 '}';
     }

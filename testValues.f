@@ -9,6 +9,7 @@ integer MESA
 return
 end
 subroutine A(integer n, x(n), logical z(100))
+integer z
 return
 end
 subroutine S
