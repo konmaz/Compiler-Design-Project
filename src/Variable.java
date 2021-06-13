@@ -5,12 +5,12 @@ import java.util.Objects;
 public class Variable {
     public String ID; //Onoma Metablitis
     public typosVarENUM typosMetablitis;
-    public String scope;
+    public Function scope;
     public String[] dimensions; // 1D,2D,3D...
     public boolean isGlobal;
     public LinkedList<String> initialValues;
 
-    public Variable(String name, typosVarENUM tp, String scope, String[] dimensions) {
+    public Variable(String name, typosVarENUM tp, Function scope, String[] dimensions) {
         this.ID = name;
         this.typosMetablitis = tp;
         this.scope = scope;

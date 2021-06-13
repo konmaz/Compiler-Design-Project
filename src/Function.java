@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Objects;
 
 public class Function {
     String name; //Name of function
@@ -31,5 +32,18 @@ public class Function {
                 ", returnType=" + returnType +
                 ", functionArguments=" + nameOfVariables +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Function function = (Function) o;
+        return name.equals(function.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }
