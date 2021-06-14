@@ -2,7 +2,7 @@ integer x(g),z,i,j
 string s,s_str_(10)
 data x/(5.:20.),(4.:-2.),(0.3:0.)/,z/.true./
 common /com1/i,j
-data s_str_/"string1", *"string2", "string3"/
+data s_str_/"string1", "string2", "string3"/
 $ no comment
 y(z) = .not. re(x) .and. .not. x(0x10F,i,g(j)).gt.y .or. z .eq. k**3
 100 call a
@@ -18,15 +18,15 @@ data i/.314159e-31/,b/5E2/
 goto 1000
 cdr(a) = [0.1, 6., -3.2, 0.]
 if (car(a).gt.0B.01.and.b.lt.x(i+2.)) then
-   integer z
-   read z,a(z)
-   goto z,(100,101,102,103,104,105)
+integer z
+read z,a(z)
+goto z,(100,101,102,103,104,105)
 else
-   logical l(x)
-   data l/.false.,.true.,.true./
-   do i=1,N,2
-      l(i) = x(i+g(i)).le.a
-   enddo
+logical l(x)
+data l/.false.,.true.,.true./
+do i=1,N,2
+l(i) = x(i+g(i)).le.a
+enddo
 endif
 call try_me_(x(u),y,l)
 if (y(g(y(z-2)))+a(1,i)) 100,1000,10
@@ -35,9 +35,8 @@ y = .not. x(i)
 enddo
 end
 subroutine try_me_(integer n,a(n))
-integer mesastinSubroutine
 do i=1,n
-   if (a(i) .gt. 0) a(i) = a(i) - i
+if (a(i) .gt. 0) a(i) = a(i) - i
 enddo
 return
 end

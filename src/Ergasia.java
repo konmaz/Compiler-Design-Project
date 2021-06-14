@@ -31,26 +31,56 @@ public class Ergasia {
         walker.walk(metaglotistisCObj, tree);
         System.out.println("------------------------");
         System.out.println("------------------------");
-        System.out.println("Symbol Table - Variables");
+        System.out.println(genTools.ANSI_RED +"Symbol Table - Variables" + genTools.ANSI_RESET);
         System.out.println("------------------------");
 
         for (LinkedList<Variable> scope : metaglotistisCObj.variablesHashMap.values())
-            for (Variable item : scope)
+            for (Variable item : scope){
                 System.out.println(item);
+                System.out.println();
+            }
 
-        System.out.println("Symbol Table - Functions");
-        for (Function functionObj: metaglotistisCObj.functionsHashMap.values())
+        System.out.println(genTools.ANSI_RED  + "Symbol Table - Functions" + genTools.ANSI_RESET);
+        for (Function functionObj: metaglotistisCObj.functionsHashMap.values()){
                 System.out.println(functionObj);
+                System.out.println();
+        }
 
-//        System.out.println("---");
-//
-//        for (Function key : metaglotistisCObj.entoles.keySet()){
-//            System.out.println(key.name + "{");
-//            for (String strItem : metaglotistisCObj.entoles.get(key))
-//                System.out.println("\t" + strItem + ";");
-//            System.out.println("}");
-//        }
 
+
+        String ANSI_RESET = "\u001B[0m";
+
+        String ANSI_RED = "\u001B[31m";
+
+
+        System.out.println(ANSI_RED + "This text is red!" + ANSI_RESET);
+
+
+        System.out.println("---");
+        System.out.println("#include <stdio.h>      /* Standard Library of Input and Output */");
+        System.out.println("#include <complex.h>    /* Standard Library of Complex Numbers */");
+        for (Function key : metaglotistisCObj.entoles.keySet()){ // Printing entoles
+            // Function declaration section
+            StringBuilder cLikeArguments = new StringBuilder();
+            for (int i = 0; i<key.functionArguments.size() ;i++) {
+
+                Variable argFuncVarObj = key.functionArguments.get(i);
+                cLikeArguments.append(genTools.enum2CLike(argFuncVarObj.typosMetablitis));
+                cLikeArguments.append(' ');
+                cLikeArguments.append(argFuncVarObj.ID);
+                if (argFuncVarObj.isArray())
+                    cLikeArguments.append("[]");
+                if (i!= key.functionArguments.size()-1)
+                    cLikeArguments.append(", ");
+            }
+            //for (Variable arg: key.functionArguments)
+
+            //Function inside body commands
+            System.out.print(genTools.enum2CLike(key.returnType)+" "+key.name + "(" + cLikeArguments +") {\n");
+            for (StringBuilder strItem : metaglotistisCObj.entoles.get(key))
+                System.out.println("\t" + strItem + ";");
+            System.out.println("}");
+        }
 
         //ParseTreeWalker walker = new ParseTreeWalker();
         //walker.walk(elekt, tree );

@@ -24,7 +24,9 @@ public class Variable {
             this.thesisPinaka *= item;
          */
     }
-
+    public Variable(String name) {
+        this.ID = name;
+    }
     public boolean isArray(){
         return dimensions != null;
     }
@@ -32,13 +34,13 @@ public class Variable {
     @Override
     public String toString() {
         return "Variable{" +
-                "\n\tID='" + ID + '\'' +
+                "\n\t ID='" + ID + '\'' +
                 ",\n\t typosMetablitis=" + typosMetablitis +
-                ",\n\t scope='" + scope + '\'' +
+                ",\n\t scope='" + scope.name + '\'' +
                 ",\n\t dimensions=" + Arrays.toString(dimensions) +
                 ",\n\t is Array=" + this.isArray() +
                 ",\n\t initialValue=" + Arrays.toString(initialValues.toArray())+
-                '}';
+                "\n\t}";
     }
 
     @Override
@@ -46,11 +48,11 @@ public class Variable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Variable variable = (Variable) o;
-        return ID.equals(variable.ID) && typosMetablitis == variable.typosMetablitis;
+        return ID.equals(variable.ID);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ID, typosMetablitis);
+        return Objects.hash(ID);
     }
 }

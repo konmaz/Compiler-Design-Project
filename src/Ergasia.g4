@@ -71,7 +71,7 @@ expressions : expressions COMMA expression | expression;
 expression : expression OROP expression
 | expression ANDOP expression
 | expression RELOP expression
-| <assoc=right> expression POWEROP expression
+| expression POWEROP expression
 | expression op=(MULOP|DIVOP) expression
 | expression op=ADDOP expression
 /*| expression ADDOP expression
@@ -288,7 +288,21 @@ fragment X:'X'|'x';
 
 
 CCONST:AUTAKI([ -~]|ESCAPE_CHARS)AUTAKI; /* EDO ISOS YPARXEI THEMA */
-SCONST:DOUBLE_AUTAKI[ -~]*DOUBLE_AUTAKI; /* EDO ISOS YPARXEI THEMA */
+//SCONST:DOUBLE_AUTAKI[ -~_'\\']* DOUBLE_AUTAKI; /* EDO ISOS YPARXEI THEMA */
+
+SCONST :(DOUBLE_AUTAKI[ -~]*DOUBLE_AUTAKI);
+
+//SCONST : ;
+//SCONST : ('"' ( [\u0020-\u007E] | [\u0020] | SKP )*'"')+;
+
+//SCONST : '"' ([\u0020] | [\u0021] | [\u0023-\u007e] | ('\\' 'n') | ('\\' 'f') | ('\\' 't') | ('\\' 'r') | ('\\' 'b') | ('\\' 'v') | '\\')* '"' ;
+
+
+
+
+
+
+
 
 AUTAKI:'\'';
 DOUBLE_AUTAKI:'"';
@@ -325,7 +339,7 @@ AADM0 : [1-9]+[0-9]*; /* Arithmos Alla Den Xekina Me 0 */
 
 
 LINE_COMMENT: '$' ~[\r\n]* -> skip;
-WS : [ \t\r\n\f]+ -> skip ;
+WS : [ \t\r\n]+ -> skip ;
 
 
 /*

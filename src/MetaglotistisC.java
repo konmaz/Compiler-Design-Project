@@ -1,11 +1,12 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 
+/**
+ * Class of MetaglotisticC has methods that are being called when node is visited
+ */
 public class MetaglotistisC extends ErgasiaBaseListener {
-    public HashMap<Function, LinkedList<Variable>> variablesHashMap; // A hash map that contains <key:Function, A list of variables objects>
-    public HashMap<String, Function> functionsHashMap; // A hash map that contains <key:Name of function, A list of function objects
+
+    public LinkedHashMap<Function, LinkedList<Variable>> variablesHashMap; // A hash map that contains <key:Function, A list of variables objects>
+    public LinkedHashMap<String, Function> functionsHashMap; // A hash map that contains <key:Name of function, A list of function objects
 
     Function lastFunctionObj;
 
@@ -13,31 +14,25 @@ public class MetaglotistisC extends ErgasiaBaseListener {
 
     private boolean insideParameters = false;
 
-    HashMap<Function, LinkedList<String>> entoles;
+    LinkedHashMap<Function, LinkedList<StringBuilder>> entoles;
 
-    Variable currentVariableInData; // gia to data (arxikopoihsh entolon)
+    Variable currentVariableInData; // For data (init variables)
 
+    /**
+     * Default Contactor
+     */
     public MetaglotistisC(){
-        lastFunctionObj = new Function("main", typosVarENUM.typVOID);
+        lastFunctionObj = new Function("main", typosVarENUM.typINTEGER); // Because there is not a main header add it manually
 
-        entoles = new HashMap<>();
+        entoles = new LinkedHashMap<>(); // Initialize entoles object
         entoles.put(lastFunctionObj, new LinkedList<>());
-
         queueForDeclarations = new LinkedList<>();
 
-        variablesHashMap = new HashMap<>();
+        variablesHashMap = new LinkedHashMap<>();
         variablesHashMap.put(lastFunctionObj, new LinkedList<>());
 
-        functionsHashMap = new HashMap<>();
+        functionsHashMap = new LinkedHashMap<>();
         functionsHashMap.put(lastFunctionObj.name, lastFunctionObj);
-    }
-
-    public void enterBody(ErgasiaParser.BodyContext ctx) {
-        //System.out.print(genTools.enum2CLike(lastFunctionObj.returnType) + " " + lastFunctionObj.name + "(");
-        //System.out.println(currentScope);
-    }
-    public void exitBody(ErgasiaParser.BodyContext ctx) {
-        //System.out.println("}");
     }
 
     public void enterDeclarations(ErgasiaParser.DeclarationsContext ctx) {
@@ -62,13 +57,23 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         //}
         String[] dimensions = null;
         if (ctx.dims() != null){
-            System.out.println();
             //dimensions = ctx.dims().getText().split(",");
             //System.out.println(Arrays.toString(dimensions));
             dimensions = ctx.dims().getText().split(",");
         }
         if (!insideParameters){
-            variablesHashMap.get(lastFunctionObj).add(new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), lastFunctionObj, dimensions));
+            Variable varObj = new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), lastFunctionObj, dimensions);
+            variablesHashMap.get(lastFunctionObj).add(varObj);
+
+            StringBuilder tempVarInit = new StringBuilder();
+            tempVarInit.append(genTools.enum2CLike(varObj.typosMetablitis));
+            tempVarInit.append(' ');
+            tempVarInit.append(varObj.ID);
+            if (varObj.isArray())
+                for (String dim : varObj.dimensions)
+                    tempVarInit.append('[').append(dim).append(']');
+
+            entoles.get(lastFunctionObj).push(tempVarInit);
             //System.out.println("\t"+ genTools.enum2CLike(queueForDeclarations.getLast())+" "+ctx.ID().getText()+";");
         }
         else{ // insideParameters == True
@@ -114,6 +119,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
             queueForDeclarations.removeLast();
         insideParameters = false;
     }
+
     public void enterValue_list(ErgasiaParser.Value_listContext ctx) {
         //System.out.println("---");
         int indexOfCurrentChildNode = ctx.getParent().children.indexOf(ctx);
@@ -126,13 +132,89 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         //System.out.println("---");
     }
 
+    /**
+     * This method is called every time the Visitor visits the node value in the tree
+     * It is used to parse the command 'data' for variable initialization
+     */
     public void enterValue(ErgasiaParser.ValueContext ctx){
         if (currentVariableInData.typosMetablitis.equals(typosVarENUM.typCOMPLEX))
             currentVariableInData.initialValues.add(genTools.complex2CLike(ctx.getText()));
-        if (currentVariableInData.typosMetablitis.equals(typosVarENUM.typLOGICAL))
+        else if (currentVariableInData.typosMetablitis.equals(typosVarENUM.typLOGICAL))
             currentVariableInData.initialValues.add(genTools.boolean2CLike(ctx.getText()));
+        else if (currentVariableInData.typosMetablitis.equals(typosVarENUM.typREAL))
+            currentVariableInData.initialValues.add(ctx.getText());
+        else if (currentVariableInData.typosMetablitis.equals(typosVarENUM.typINTEGER))
+            currentVariableInData.initialValues.add(ctx.getText());
+        else
+            return; // If data init value is not in the if above just ignore it
+
+        StringBuilder commandToAdd = new StringBuilder();
+        if (currentVariableInData.isArray())
+            commandToAdd.append(currentVariableInData.ID).append('[').append(currentVariableInData.initialValues.size() - 1).append("] = ").append(currentVariableInData.initialValues.getLast());
+        else
+            commandToAdd.append(currentVariableInData.ID).append(" = ").append(currentVariableInData.initialValues.get(0));
+        entoles.get(lastFunctionObj).add(commandToAdd);
     }
 
+    public void enterIo_statement(ErgasiaParser.Io_statementContext ctx) {
+        if (ctx.READ() != null)
+            entoles.get(lastFunctionObj).add(new StringBuilder("std::cin"));
+        else if (ctx.WRITE() != null)
+            entoles.get(lastFunctionObj).add(new StringBuilder("std::cout"));
+    }
+    public void enterRead_item(ErgasiaParser.Read_itemContext ctx) {
+        //String original = entoles.get(lastFunctionObj).removeLast();
+        entoles.get(lastFunctionObj).getLast().append(">>");//.append(ctx.variable().ID().getText());
+        //entoles.get(lastFunctionObj).add(original);
+    }
+
+    public void enterWrite_item(ErgasiaParser.Write_itemContext ctx) {
+        entoles.get(lastFunctionObj).getLast().append("<<");//.append(ctx.getText());
+//        String original = entoles.get(lastFunctionObj).removeLast();
+//            original += "<<"+ctx.getText();
+//        entoles.get(lastFunctionObj).add(original);
+    }
+
+    public void enterVariable(ErgasiaParser.VariableContext ctx) {
+        if (ctx.LPAREN() != null){
+            //System.out.println(ctx.parent.getChild(indexOfCurrentChildNode + 1).getText());
+            int indexOfCurrentChildNode = ctx.getParent().children.indexOf(ctx);
+
+            boolean fistTime = false;
+            if (ctx.parent.getChild(indexOfCurrentChildNode + 1) != null)
+                if (ctx.parent.getChild(indexOfCurrentChildNode + 1).getText().equals("=")){// Ousiastika to proto variable prin to =
+                    fistTime = true;
+                    entoles.get(lastFunctionObj).add(new StringBuilder());
+                }
+
+            if (genTools.listContains(variablesHashMap.get(lastFunctionObj), new Variable(ctx.ID().getSymbol().getText()))){
+                entoles.get(lastFunctionObj).getLast().append(ctx.ID().getText()).append(genTools.array2CLike(ctx.expressions().getText()));
+            }
+            else {
+                entoles.get(lastFunctionObj).getLast().append(ctx.getText());
+//                if (ctx.LPAREN() != null){ // propably a function call
+//                    System.out.println();
+//                }
+//                else { // Just a normal variable probably
+//                    entoles.get(lastFunctionObj).getLast().append(ctx.getText());
+//                }
+            }
+            //System.out.println(ctx.ID().getSymbol().getText());
+            if (fistTime)
+                entoles.get(lastFunctionObj).getLast().append('=');
+        }
+    }
+
+    // UNUSED CODE Methods
+
+    public void enterBody(ErgasiaParser.BodyContext ctx) {
+        //System.out.print(genTools.enum2CLike(lastFunctionObj.returnType) + " " + lastFunctionObj.name + "(");
+        //System.out.println(currentScope);
+    }
+
+    public void exitBody(ErgasiaParser.BodyContext ctx) {
+        //System.out.println("}");
+    }
     public void enterAssignment(ErgasiaParser.AssignmentContext ctx) {
         //String assignmentID =  ctx.variable().ID().getText();
     }

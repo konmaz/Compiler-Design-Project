@@ -28,10 +28,10 @@ public class Function {
         nameOfVariables.append(']');
 
         return "Function{" +
-                "name='" + name + '\'' +
-                ", returnType=" + returnType +
-                ", functionArguments=" + nameOfVariables +
-                '}';
+                "\n\t name='" + name + '\'' +
+                ",\n\t returnType=" + returnType +
+                ",\n\t functionArguments=" + nameOfVariables +
+                "\n\t}";
     }
 
     @Override
