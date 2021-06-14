@@ -50,6 +50,10 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         }
     }
 
+    /**
+     * For initializing a variable
+     * @param ctx
+     */
     public void enterUndef_variable(ErgasiaParser.Undef_variableContext ctx) {
         //if (variablesHashMap.containsKey(ctx.ID().getText())){
           //  System.out.println("Η μεταβλητή '"+ctx.ID().getText()+ "' έχει δηλώθεί προηγουμένως ως "+ variablesHashMap.get(ctx.ID().getText()));
@@ -73,7 +77,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
                 for (String dim : varObj.dimensions)
                     tempVarInit.append('[').append(dim).append(']');
 
-            entoles.get(lastFunctionObj).push(tempVarInit);
+            entoles.get(lastFunctionObj).addLast(tempVarInit);
             //System.out.println("\t"+ genTools.enum2CLike(queueForDeclarations.getLast())+" "+ctx.ID().getText()+";");
         }
         else{ // insideParameters == True
@@ -204,7 +208,9 @@ public class MetaglotistisC extends ErgasiaBaseListener {
                 entoles.get(lastFunctionObj).getLast().append('=');
         }
     }
-
+    public void exitAssignment(ErgasiaParser.AssignmentContext ctx) {
+        entoles.get(lastFunctionObj).add(new StringBuilder());
+    }
     // UNUSED CODE Methods
 
     public void enterBody(ErgasiaParser.BodyContext ctx) {

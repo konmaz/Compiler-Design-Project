@@ -55,6 +55,7 @@ public class Ergasia {
 
         System.out.println(ANSI_RED + "This text is red!" + ANSI_RESET);
 
+        System.out.println(genTools.logicalExpr2CLike("if (x.gt.0..and.x.lt.a(i)) y(i) = i**x"));
 
         System.out.println("---");
         System.out.println("#include <stdio.h>      /* Standard Library of Input and Output */");

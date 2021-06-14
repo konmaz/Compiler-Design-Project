@@ -1,9 +1,22 @@
 import org.stringtemplate.v4.ST;
 
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class genTools {
+    private static final String[][] contents = new String[][]{
+            {".or."," || "},
+            {".and."," && "},
+            {".not.", " ! "},
 
+            {".gt.", " > "},
+            {".ge.", " >= "},
+            {".lt.", " < "},
+            {".le.", " <= "},
+            {".eq.", " == "},
+            {".ne.", " != "},
+    };
     public static typosVarENUM getEnumFromString(String x){
         if (x.equalsIgnoreCase("integer"))
             return typosVarENUM.typINTEGER;
@@ -65,6 +78,26 @@ public class genTools {
             dest.append("[").append(dim).append("]");
         }
         return String.valueOf(dest);
+    }
+
+    public static String logicalExpr2CLike(String exp){
+        StringBuilder sb = new StringBuilder(exp);
+        for (int i = 0; i < genTools.contents.length; i++) {
+
+            replaceAll(sb, genTools.contents[i][0], genTools.contents[i][1]);
+            replaceAll(sb, genTools.contents[i][0].toUpperCase(), genTools.contents[i][1]);
+
+        }
+        return sb.toString();
+    }
+
+    public static void replaceAll(StringBuilder builder, String from, String to) {
+        int index = builder.indexOf(from);
+        while (index != -1) {
+            builder.replace(index, index + from.length(), to);
+            index += to.length(); // Move to the end of the replacement
+            index = builder.indexOf(from, index);
+        }
     }
 }
 
