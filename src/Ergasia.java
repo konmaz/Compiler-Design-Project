@@ -79,7 +79,7 @@ public class Ergasia {
             //Function inside body commands
             System.out.print(genTools.enum2CLike(key.returnType)+" "+key.name + "(" + cLikeArguments +") {\n");
             for (StringBuilder strItem : metaglotistisCObj.entoles.get(key))
-                System.out.println("\t" + strItem + ";");
+                System.out.println("\t" + strItem);
             System.out.println("}");
         }
 

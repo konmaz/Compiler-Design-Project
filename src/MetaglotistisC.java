@@ -22,7 +22,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
      * Default Contactor
      */
     public MetaglotistisC(){
-        lastFunctionObj = new Function("main", typosVarENUM.typINTEGER); // Because there is not a main header add it manually
+        lastFunctionObj = new Function("main", typosVarENUM.typINTEGER); // Because there is not a main header I add it manually
 
         entoles = new LinkedHashMap<>(); // Initialize entoles object
         entoles.put(lastFunctionObj, new LinkedList<>());
@@ -33,6 +33,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
 
         functionsHashMap = new LinkedHashMap<>();
         functionsHashMap.put(lastFunctionObj.name, lastFunctionObj);
+        entoles.get(lastFunctionObj).add(new StringBuilder()); // proti entoli
     }
 
     public void enterDeclarations(ErgasiaParser.DeclarationsContext ctx) {
@@ -77,7 +78,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
                 for (String dim : varObj.dimensions)
                     tempVarInit.append('[').append(dim).append(']');
 
-            entoles.get(lastFunctionObj).addLast(tempVarInit);
+            entoles.get(lastFunctionObj).getLast().append(tempVarInit);
             //System.out.println("\t"+ genTools.enum2CLike(queueForDeclarations.getLast())+" "+ctx.ID().getText()+";");
         }
         else{ // insideParameters == True
@@ -190,26 +191,55 @@ public class MetaglotistisC extends ErgasiaBaseListener {
                     fistTime = true;
                     entoles.get(lastFunctionObj).add(new StringBuilder());
                 }
-
-            if (genTools.listContains(variablesHashMap.get(lastFunctionObj), new Variable(ctx.ID().getSymbol().getText()))){
-                entoles.get(lastFunctionObj).getLast().append(ctx.ID().getText()).append(genTools.array2CLike(ctx.expressions().getText()));
+            Variable varOfReference; // The variable that is being referenced.
+            varOfReference = genTools.findObjByProperty(variablesHashMap.get(lastFunctionObj), ctx.ID().getSymbol().getText());
+            if (varOfReference != null){
+                if (varOfReference.isArray())
+                    entoles.get(lastFunctionObj).getLast().append(ctx.ID().getText()).append(genTools.array2CLike(ctx.expressions().getText()));
+                else
+                    entoles.get(lastFunctionObj).getLast().append(ctx.getText());
             }
-            else {
-                entoles.get(lastFunctionObj).getLast().append(ctx.getText());
+            System.out.println(ctx.getText());
+//            else { // Not a variable
+//                entoles.get(lastFunctionObj).getLast().append(ctx.ID().getText());
 //                if (ctx.LPAREN() != null){ // propably a function call
 //                    System.out.println();
 //                }
 //                else { // Just a normal variable probably
 //                    entoles.get(lastFunctionObj).getLast().append(ctx.getText());
 //                }
-            }
+//            }
             //System.out.println(ctx.ID().getSymbol().getText());
             if (fistTime)
                 entoles.get(lastFunctionObj).getLast().append('=');
         }
+        else { // The variable that is being referenced is not a function or array
+            entoles.get(lastFunctionObj).getLast().append(ctx.getText());
+        }
     }
+
+    /**
+     *
+     * @param ctx
+     */
     public void exitAssignment(ErgasiaParser.AssignmentContext ctx) {
         entoles.get(lastFunctionObj).add(new StringBuilder());
+    }
+    public void exitUndef_variable(ErgasiaParser.Undef_variableContext ctx) {
+        entoles.get(lastFunctionObj).getLast().append(';');
+        entoles.get(lastFunctionObj).add(new StringBuilder());
+    }
+
+    public void enterIf_statement(ErgasiaParser.If_statementContext ctx) {
+        entoles.get(lastFunctionObj).add(new StringBuilder("if ("));
+    }
+    public void enterExpression(ErgasiaParser.ExpressionContext ctx) {
+        if (ctx.simple_constant() != null){
+            if (ctx.simple_constant().ICONST() != null)
+                entoles.get(lastFunctionObj).getLast().append(ctx.getText());
+        }
+        if (ctx.getChildCount() == 3)
+            entoles.get(lastFunctionObj).getLast().append(genTools.logicalExpr2CLike(ctx.getChild(1).getText()));
     }
     // UNUSED CODE Methods
 

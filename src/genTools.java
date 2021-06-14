@@ -1,5 +1,6 @@
 import org.stringtemplate.v4.ST;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -98,6 +99,16 @@ public class genTools {
             index += to.length(); // Move to the end of the replacement
             index = builder.indexOf(from, index);
         }
+    }
+
+    /**
+     * https://stackoverflow.com/questions/17526608/how-to-find-an-object-in-an-arraylist-by-property
+     * @param variableCollection
+     * @param searchID
+     * @return null if no object found with id
+     */
+    public static Variable findObjByProperty(Collection<Variable> variableCollection, String searchID) {
+        return variableCollection.stream().filter(carnet -> searchID.equals(carnet.ID)).findFirst().orElse(null);
     }
 }
 
