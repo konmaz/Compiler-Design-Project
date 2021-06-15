@@ -230,7 +230,6 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         if (ctx.LPAREN() != null){
             //System.out.println(ctx.parent.getChild(indexOfCurrentChildNode + 1).getText());
             int indexOfCurrentChildNode = ctx.getParent().children.indexOf(ctx);
-
             boolean fistTime = false;
             if (ctx.parent.getChild(indexOfCurrentChildNode + 1) != null)
                 if (ctx.parent.getChild(indexOfCurrentChildNode + 1).getText().equals("=")){// Ousiastika to proto variable prin to =
@@ -240,10 +239,11 @@ public class MetaglotistisC extends ErgasiaBaseListener {
             Variable varOfReference; // The variable that is being referenced.
             varOfReference = genTools.findObjByProperty(variablesHashMap.get(lastFunctionObj), ctx.ID().getSymbol().getText());
             if (varOfReference != null){
-                if (varOfReference.isArray())
+                if (varOfReference.isArray()) {
                     entoles.get(lastFunctionObj).getLast().append(ctx.ID().getText()).append(genTools.array2CLike(ctx.expressions().getText()));
-                else
-                    entoles.get(lastFunctionObj).getLast().append(ctx.getText());
+                }
+            }else{ // It is a function call
+                entoles.get(lastFunctionObj).getLast().append(ctx.ID().getText()).append('(');
             }
             System.out.println(ctx.getText());
 //            else { // Not a variable
@@ -263,7 +263,13 @@ public class MetaglotistisC extends ErgasiaBaseListener {
             entoles.get(lastFunctionObj).getLast().append(ctx.getText());
         }
     }
-
+    public void exitVariable(ErgasiaParser.VariableContext ctx) {
+        if (ignoreListeners)
+            return;
+        if (ctx.RPAREN() != null){
+            entoles.get(lastFunctionObj).getLast().append(')');
+        }
+    }
     /**
      * @param ctx
      */
