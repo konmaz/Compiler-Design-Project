@@ -131,5 +131,14 @@ public class genTools {
         return new Visitor(variablesLinkedList).visit(parser.if_statement());
     }
 
+    public static String assignment2CLike(String exp, LinkedList<Variable> variablesLinkedList){
+
+        ErgasiaLexer lexer = new ErgasiaLexer(new ANTLRInputStream(exp));
+        ErgasiaParser parser = new ErgasiaParser(new CommonTokenStream(lexer));
+        //String result = new Visitor(variablesLinkedList).visit(parser.if_statement());
+        //System.out.println(result);
+        return new Visitor(variablesLinkedList).visit(parser.assignment());
+    }
+
 }
 

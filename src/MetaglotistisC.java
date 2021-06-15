@@ -245,11 +245,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
      *
      * @param ctx
      */
-    public void exitAssignment(ErgasiaParser.AssignmentContext ctx) {
-        if (ignoreListeners)
-            return;
-        entoles.get(lastFunctionObj).add(new StringBuilder());
-    }
+
     public void exitUndef_variable(ErgasiaParser.Undef_variableContext ctx) {
         if (ignoreListeners)
             return;
@@ -293,6 +289,12 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         //System.out.println("}");
     }
     public void enterAssignment(ErgasiaParser.AssignmentContext ctx) {
-        //String assignmentID =  ctx.variable().ID().getText();
+        if (ignoreListeners)
+            return;
+        ignoreListeners = true;
+        entoles.get(lastFunctionObj).add(new StringBuilder().append(genTools.assignment2CLike(ctx.getText(), variablesHashMap.get(lastFunctionObj))));
+    }
+    public void exitAssignment(ErgasiaParser.AssignmentContext ctx) {
+        ignoreListeners = false;
     }
 }
