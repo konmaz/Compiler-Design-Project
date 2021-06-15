@@ -85,16 +85,24 @@ public class MetaglotistisC extends ErgasiaBaseListener {
                 for (String dim : varObj.dimensions)
                     tempVarInit.append('[').append(dim).append(']');
 
-            entoles.get(lastFunctionObj).getLast().append(tempVarInit);
+            entoles.get(lastFunctionObj).add(new StringBuilder().append(tempVarInit).append(';'));
             //System.out.println("\t"+ genTools.enum2CLike(queueForDeclarations.getLast())+" "+ctx.ID().getText()+";");
         }
         else{ // insideParameters == True
-            functionsHashMap.get(lastFunctionObj.name).addFunctionArgument(new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), lastFunctionObj, dimensions));
+            Variable varObj = new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), lastFunctionObj, dimensions);
+            functionsHashMap.get(lastFunctionObj.name).addFunctionArgument(varObj);
+            variablesHashMap.get(lastFunctionObj).add(varObj);
         }
         //dilomenesVar.get(currentVarType.toLowerCase()).add(ctx.ID().getText());
         //System.out.println(ctx.ID().getText());
     }
 
+//    public void exitUndef_variable(ErgasiaParser.Undef_variableContext ctx) {
+//        if (ignoreListeners)
+//            return;
+//        //entoles.get(lastFunctionObj).getLast().append("?");
+//        entoles.get(lastFunctionObj).add(new StringBuilder());
+//    }
     public void enterHeader(ErgasiaParser.HeaderContext ctx) { // A new function declaration found
         if (ignoreListeners)
             return;
@@ -112,6 +120,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
             lastFunctionObj = new Function(ctx.ID().getSymbol().getText(), functionReturnType);
             functionsHashMap.put(lastFunctionObj.name, lastFunctionObj);
             entoles.put(lastFunctionObj, new LinkedList<>());
+            entoles.get(lastFunctionObj).add(new StringBuilder());
         }
 
         if (!variablesHashMap.containsKey(lastFunctionObj)) // If variablesHashMap don't contains the function object as key add it
@@ -141,9 +150,13 @@ public class MetaglotistisC extends ErgasiaBaseListener {
             return;
         //System.out.println("---");
         int indexOfCurrentChildNode = ctx.getParent().children.indexOf(ctx);
-        for (Variable searchKey : variablesHashMap.get(lastFunctionObj))
-            if (searchKey.ID.equals(ctx.parent.getChild(indexOfCurrentChildNode - 1).getText()))
-                currentVariableInData = searchKey;
+        //currentVariableInData = genTools.findObjByProperty(variablesHashMap.get(lastFunctionObj),ctx.parent.getChild(indexOfCurrentChildNode - 1).getText());
+        System.out.println("See current var id data = ctx.parent.getChild(indexOfCurrentChildNode - 1).getText() ");
+        currentVariableInData = genTools.findObjByProperty(variablesHashMap.get(lastFunctionObj), ctx.parent.getChild(indexOfCurrentChildNode - 1).getText());
+
+//        for (Variable searchKey : variablesHashMap.get(lastFunctionObj))
+//            if (searchKey.ID.equals(ctx.parent.getChild(indexOfCurrentChildNode - 1).getText()))
+//                currentVariableInData = searchKey;
         //System.out.println(); // get left sibling
         //for (String item: ctx.values().getText().split(","))
         //System.out.println(ctx.values().getText());
@@ -157,6 +170,8 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     public void enterValue(ErgasiaParser.ValueContext ctx){
         if (ignoreListeners)
             return;
+        if (currentVariableInData == null)
+            System.out.println("The variable at line "+ctx.getStart().getLine() +" is not set but you tried to initialize it with data");
         if (currentVariableInData.typosMetablitis.equals(typosVarENUM.typCOMPLEX))
             currentVariableInData.initialValues.add(genTools.complex2CLike(ctx.getText()));
         else if (currentVariableInData.typosMetablitis.equals(typosVarENUM.typLOGICAL))
@@ -164,7 +179,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         else if (currentVariableInData.typosMetablitis.equals(typosVarENUM.typREAL))
             currentVariableInData.initialValues.add(ctx.getText());
         else if (currentVariableInData.typosMetablitis.equals(typosVarENUM.typINTEGER))
-            currentVariableInData.initialValues.add(ctx.getText());
+            currentVariableInData.initialValues.add(genTools.boolean2CLike(ctx.getText()));
         else
             return; // If data init value is not in the if above just ignore it
 
@@ -173,7 +188,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
             commandToAdd.append(currentVariableInData.ID).append('[').append(currentVariableInData.initialValues.size() - 1).append("] = ").append(currentVariableInData.initialValues.getLast());
         else
             commandToAdd.append(currentVariableInData.ID).append(" = ").append(currentVariableInData.initialValues.get(0));
-        entoles.get(lastFunctionObj).add(commandToAdd);
+        entoles.get(lastFunctionObj).add(commandToAdd.append(';'));
     }
 
     public void enterIo_statement(ErgasiaParser.Io_statementContext ctx) {
@@ -183,6 +198,14 @@ public class MetaglotistisC extends ErgasiaBaseListener {
             entoles.get(lastFunctionObj).add(new StringBuilder("std::cin"));
         else if (ctx.WRITE() != null)
             entoles.get(lastFunctionObj).add(new StringBuilder("std::cout"));
+    }
+    public void exitIo_statement(ErgasiaParser.Io_statementContext ctx) {
+        if (ignoreListeners)
+            return;
+        if (ctx.READ() != null)
+            entoles.get(lastFunctionObj).getLast().append(';');
+        else if (ctx.WRITE() != null)
+            entoles.get(lastFunctionObj).getLast().append(';');
     }
     public void enterRead_item(ErgasiaParser.Read_itemContext ctx) {
         if (ignoreListeners)
@@ -245,14 +268,6 @@ public class MetaglotistisC extends ErgasiaBaseListener {
      *
      * @param ctx
      */
-
-    public void exitUndef_variable(ErgasiaParser.Undef_variableContext ctx) {
-        if (ignoreListeners)
-            return;
-        entoles.get(lastFunctionObj).getLast().append(';');
-        entoles.get(lastFunctionObj).add(new StringBuilder());
-    }
-
     public void enterIf_statement(ErgasiaParser.If_statementContext ctx) {
         ignoreListeners = true;
         entoles.get(lastFunctionObj).add(new StringBuilder(genTools.if2CLike(ctx.getText(), variablesHashMap.get(lastFunctionObj))));
@@ -292,7 +307,14 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         if (ignoreListeners)
             return;
         ignoreListeners = true;
-        entoles.get(lastFunctionObj).add(new StringBuilder().append(genTools.assignment2CLike(ctx.getText(), variablesHashMap.get(lastFunctionObj))));
+        if (ctx.variable().getText().equals(lastFunctionObj.name)){
+            StringBuilder temp = new StringBuilder().append(genTools.assignment2CLike(ctx.getText(), variablesHashMap.get(lastFunctionObj))).append(';');
+            temp.delete(0,temp.indexOf("=")+1);
+            temp.insert(0,"return");
+            entoles.get(lastFunctionObj).add(temp);
+            return;
+        }
+        entoles.get(lastFunctionObj).add(new StringBuilder().append(genTools.assignment2CLike(ctx.getText(), variablesHashMap.get(lastFunctionObj))).append(';'));
     }
     public void exitAssignment(ErgasiaParser.AssignmentContext ctx) {
         ignoreListeners = false;

@@ -3,6 +3,7 @@ import java.util.LinkedList;
 
 public class Visitor extends ErgasiaBaseVisitor<String>{
     static LinkedList<Variable> variablesLinkedList;
+
     public Visitor(LinkedList<Variable> variablesLinkedList) {
         Visitor.variablesLinkedList = variablesLinkedList;
     }
@@ -10,7 +11,7 @@ public class Visitor extends ErgasiaBaseVisitor<String>{
     @Override
     public String visitIf_statement(ErgasiaParser.If_statementContext ctx) {
         //System.out.println(visit(ctx.expression()));
-        return "if ("+visit(ctx.expression()) + ")"+" "+visit(ctx.simple_statement());
+        return "if ("+visit(ctx.expression()) + ")"+" "+visit(ctx.simple_statement()) + ';';
         //return super.visitIf_statement(ctx);
     }
 
@@ -27,6 +28,9 @@ public class Visitor extends ErgasiaBaseVisitor<String>{
 
     @Override
     public String visitAssignment(ErgasiaParser.AssignmentContext ctx) {
+
+        if (Visitor.variablesLinkedList.getLast().scope.name.equals(ctx.variable().getText())) // Return
+            return ("return " + visit(ctx.expression()));
         return (visit(ctx.variable()) + " = " + visit(ctx.expression()));
     }
 

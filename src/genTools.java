@@ -44,15 +44,16 @@ public class genTools {
         if(typosVarENUMObj == typosVarENUM.typLOGICAL)
             return "bool";
         if(typosVarENUMObj == typosVarENUM.typCOMPLEX)
-            return "double complex";
+            return "complex";
         return "void";
     }
     public static String boolean2CLike(String expr){
+        System.out.println("ME KALESES");
         if (expr.equalsIgnoreCase(".true."))
             return "true";
         else if (expr.equalsIgnoreCase(".false."))
             return "false";
-        return "";
+        return expr;
     }
     public static String complex2CLike(String expr){ return expr.replace(':',',');
     }
