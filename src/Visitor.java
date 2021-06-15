@@ -10,7 +10,7 @@ public class Visitor extends ErgasiaBaseVisitor<String>{
     @Override
     public String visitIf_statement(ErgasiaParser.If_statementContext ctx) {
         //System.out.println(visit(ctx.expression()));
-        return "if ("+visit(ctx.expression()) + ")";
+        return "if ("+visit(ctx.expression()) + ")"+" "+visit(ctx.simple_statement());
         //return super.visitIf_statement(ctx);
     }
 
@@ -24,6 +24,12 @@ public class Visitor extends ErgasiaBaseVisitor<String>{
         //return super.visitVariable(ctx);
     }
 
+
+    @Override
+    public String visitAssignment(ErgasiaParser.AssignmentContext ctx) {
+        return (visit(ctx.variable()) + " = " + visit(ctx.expression()));
+    }
+
     @Override
     public String visitExpression(ErgasiaParser.ExpressionContext ctx) {
         if (ctx.getChildCount() == 1){
@@ -35,7 +41,7 @@ public class Visitor extends ErgasiaBaseVisitor<String>{
         }
         if (ctx.getChildCount() == 3){
             if (ctx.POWEROP() != null){
-                return "power("+visit(ctx.getChild(0))+","+visit(ctx.getChild(2))+")";
+                return "(int) power("+visit(ctx.getChild(0))+","+visit(ctx.getChild(2))+")";
             }
             if (ctx.LPAREN() != null && ctx.RPAREN() != null)
                 return ("(" + visit(ctx.getChild(1))+ ")");

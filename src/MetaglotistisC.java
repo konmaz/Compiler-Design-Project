@@ -264,7 +264,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
 
     public void exitIf_statement(ErgasiaParser.If_statementContext ctx) {
         ignoreListeners = false;
-        entoles.get(lastFunctionObj).getLast().append(ctx.simple_statement().getText()).append(';');
+        //entoles.get(lastFunctionObj).getLast().append(ctx.simple_statement().getText()).append(';');
         entoles.get(lastFunctionObj).add(new StringBuilder());
 
     }
