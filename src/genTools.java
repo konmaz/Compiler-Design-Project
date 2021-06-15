@@ -110,5 +110,13 @@ public class genTools {
     public static Variable findObjByProperty(Collection<Variable> variableCollection, String searchID) {
         return variableCollection.stream().filter(carnet -> searchID.equals(carnet.ID)).findFirst().orElse(null);
     }
+
+    public static String logicSingle2Clike(String exp){
+        for (int i = 0; i < genTools.contents.length; i++) {
+            if (genTools.contents[i][0].equalsIgnoreCase(exp))
+                return genTools.contents[i][1];
+        }
+        return "?";
+    }
 }
 

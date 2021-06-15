@@ -233,10 +233,13 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     public void enterIf_statement(ErgasiaParser.If_statementContext ctx) {
         entoles.get(lastFunctionObj).add(new StringBuilder("if ("));
     }
-    public void enterExpression(ErgasiaParser.ExpressionContext ctx) {
+    public void exitExpression(ErgasiaParser.ExpressionContext ctx) {
+//        if (ctx.simple_constant() != null){
+//            if (ctx.simple_constant().ICONST() != null)
+//                entoles.get(lastFunctionObj).getLast().append(ctx.getText());
+//        }
         if (ctx.simple_constant() != null){
-            if (ctx.simple_constant().ICONST() != null)
-                entoles.get(lastFunctionObj).getLast().append(ctx.getText());
+            entoles.get(lastFunctionObj).getLast().append(ctx.getText());
         }
         if (ctx.getChildCount() == 3)
             entoles.get(lastFunctionObj).getLast().append(genTools.logicalExpr2CLike(ctx.getChild(1).getText()));
