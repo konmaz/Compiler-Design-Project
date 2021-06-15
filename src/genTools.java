@@ -1,6 +1,9 @@
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.stringtemplate.v4.ST;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -116,7 +119,17 @@ public class genTools {
             if (genTools.contents[i][0].equalsIgnoreCase(exp))
                 return genTools.contents[i][1];
         }
-        return "?";
+        return exp;
     }
+
+    public static String if2CLike(String exp, LinkedList<Variable> variablesLinkedList){
+
+        ErgasiaLexer lexer = new ErgasiaLexer(new ANTLRInputStream(exp));
+        ErgasiaParser parser = new ErgasiaParser(new CommonTokenStream(lexer));
+        //String result = new Visitor(variablesLinkedList).visit(parser.if_statement());
+        //System.out.println(result);
+        return new Visitor(variablesLinkedList).visit(parser.if_statement());
+    }
+
 }
 

@@ -17,6 +17,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     LinkedHashMap<Function, LinkedList<StringBuilder>> entoles;
 
     Variable currentVariableInData; // For data (init variables)
+    private boolean ignoreListeners = false;
 
     /**
      * Default Contactor
@@ -37,6 +38,8 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     }
 
     public void enterDeclarations(ErgasiaParser.DeclarationsContext ctx) {
+        if (ignoreListeners)
+            return;
         if (ctx.vars() != null){
             //queueForDeclarations.add(typosVarENUM.typVOID);
             //System.out.println("mpika");
@@ -46,6 +49,8 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     }
 
     public void exitDeclarations(ErgasiaParser.DeclarationsContext ctx) {
+        if (ignoreListeners)
+            return;
         if (ctx.vars() != null) {
             queueForDeclarations.removeLast();
         }
@@ -56,6 +61,8 @@ public class MetaglotistisC extends ErgasiaBaseListener {
      * @param ctx
      */
     public void enterUndef_variable(ErgasiaParser.Undef_variableContext ctx) {
+        if (ignoreListeners)
+            return;
         //if (variablesHashMap.containsKey(ctx.ID().getText())){
           //  System.out.println("Η μεταβλητή '"+ctx.ID().getText()+ "' έχει δηλώθεί προηγουμένως ως "+ variablesHashMap.get(ctx.ID().getText()));
             //System.exit(-1);
@@ -89,6 +96,8 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     }
 
     public void enterHeader(ErgasiaParser.HeaderContext ctx) { // A new function declaration found
+        if (ignoreListeners)
+            return;
         //currentFunctionScope = ctx.ID().getSymbol().getText();
         System.out.println("-S-");
         System.out.println(ctx.ID().getSymbol().getText());
@@ -113,6 +122,8 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     }
 
     public void enterFormal_parameters(ErgasiaParser.Formal_parametersContext ctx){
+        if (ignoreListeners)
+            return;
         //System.out.println(ctx.getText());
         if (ctx.vars() != null)
             queueForDeclarations.add(genTools.getEnumFromString(ctx.type().getText()));
@@ -126,6 +137,8 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     }
 
     public void enterValue_list(ErgasiaParser.Value_listContext ctx) {
+        if (ignoreListeners)
+            return;
         //System.out.println("---");
         int indexOfCurrentChildNode = ctx.getParent().children.indexOf(ctx);
         for (Variable searchKey : variablesHashMap.get(lastFunctionObj))
@@ -142,6 +155,8 @@ public class MetaglotistisC extends ErgasiaBaseListener {
      * It is used to parse the command 'data' for variable initialization
      */
     public void enterValue(ErgasiaParser.ValueContext ctx){
+        if (ignoreListeners)
+            return;
         if (currentVariableInData.typosMetablitis.equals(typosVarENUM.typCOMPLEX))
             currentVariableInData.initialValues.add(genTools.complex2CLike(ctx.getText()));
         else if (currentVariableInData.typosMetablitis.equals(typosVarENUM.typLOGICAL))
@@ -162,18 +177,24 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     }
 
     public void enterIo_statement(ErgasiaParser.Io_statementContext ctx) {
+        if (ignoreListeners)
+            return;
         if (ctx.READ() != null)
             entoles.get(lastFunctionObj).add(new StringBuilder("std::cin"));
         else if (ctx.WRITE() != null)
             entoles.get(lastFunctionObj).add(new StringBuilder("std::cout"));
     }
     public void enterRead_item(ErgasiaParser.Read_itemContext ctx) {
+        if (ignoreListeners)
+            return;
         //String original = entoles.get(lastFunctionObj).removeLast();
         entoles.get(lastFunctionObj).getLast().append(">>");//.append(ctx.variable().ID().getText());
         //entoles.get(lastFunctionObj).add(original);
     }
 
     public void enterWrite_item(ErgasiaParser.Write_itemContext ctx) {
+        if (ignoreListeners)
+            return;
         entoles.get(lastFunctionObj).getLast().append("<<");//.append(ctx.getText());
 //        String original = entoles.get(lastFunctionObj).removeLast();
 //            original += "<<"+ctx.getText();
@@ -181,6 +202,8 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     }
 
     public void enterVariable(ErgasiaParser.VariableContext ctx) {
+        if (ignoreListeners)
+            return;
         if (ctx.LPAREN() != null){
             //System.out.println(ctx.parent.getChild(indexOfCurrentChildNode + 1).getText());
             int indexOfCurrentChildNode = ctx.getParent().children.indexOf(ctx);
@@ -223,17 +246,32 @@ public class MetaglotistisC extends ErgasiaBaseListener {
      * @param ctx
      */
     public void exitAssignment(ErgasiaParser.AssignmentContext ctx) {
+        if (ignoreListeners)
+            return;
         entoles.get(lastFunctionObj).add(new StringBuilder());
     }
     public void exitUndef_variable(ErgasiaParser.Undef_variableContext ctx) {
+        if (ignoreListeners)
+            return;
         entoles.get(lastFunctionObj).getLast().append(';');
         entoles.get(lastFunctionObj).add(new StringBuilder());
     }
 
     public void enterIf_statement(ErgasiaParser.If_statementContext ctx) {
-        entoles.get(lastFunctionObj).add(new StringBuilder("if ("));
+        ignoreListeners = true;
+        entoles.get(lastFunctionObj).add(new StringBuilder(genTools.if2CLike(ctx.getText(), variablesHashMap.get(lastFunctionObj))));
     }
+
+    public void exitIf_statement(ErgasiaParser.If_statementContext ctx) {
+        ignoreListeners = false;
+        entoles.get(lastFunctionObj).getLast().append(ctx.simple_statement().getText()).append(';');
+        entoles.get(lastFunctionObj).add(new StringBuilder());
+
+    }
+
     public void exitExpression(ErgasiaParser.ExpressionContext ctx) {
+        if (ignoreListeners)
+            return;
 //        if (ctx.simple_constant() != null){
 //            if (ctx.simple_constant().ICONST() != null)
 //                entoles.get(lastFunctionObj).getLast().append(ctx.getText());
@@ -242,7 +280,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
             entoles.get(lastFunctionObj).getLast().append(ctx.getText());
         }
         if (ctx.getChildCount() == 3)
-            entoles.get(lastFunctionObj).getLast().append(genTools.logicalExpr2CLike(ctx.getChild(1).getText()));
+            entoles.get(lastFunctionObj).getLast().append(" ").append(genTools.logicalExpr2CLike(ctx.getChild(1).getText()));
     }
     // UNUSED CODE Methods
 
