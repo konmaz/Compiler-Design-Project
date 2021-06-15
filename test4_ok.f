@@ -1,16 +1,12 @@
-integer n,x,y(3),i,number
-real f
-write number
-end
-
-integer function z(integer number)
-  if(number .eq. 3) number = 5
-  if(number .eq. 3) z = number
-  if(number .ne. 3) z = number
+integer n
+write "Give fibonacci n = "
+read n
+write fibonacci(n)
 
 end
 
-subroutine number
-  write 3
+integer function fibonacci(integer number)
+    if(number .eq. 0) fibonacci = 0
+    if(number .eq. 1) fibonacci = 1
+    fibonacci = fibonacci(number - 1) + fibonacci(number-2)
 end
-

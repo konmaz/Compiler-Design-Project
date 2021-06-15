@@ -18,7 +18,7 @@ public class Visitor extends ErgasiaBaseVisitor<String>{
     @Override
     public String visitVariable(ErgasiaParser.VariableContext ctx) {
         if (ctx.LPAREN() != null) {// Function or array access because the variable contains a '('
-            if (genTools.findObjByProperty(variablesLinkedList, ctx.ID().getText()) != null)
+            if (genTools.findObjByProperty(variablesLinkedList, ctx.ID().getText()) != null) // Change '(' to '['
                 return ctx.ID().getText()+genTools.array2CLike(ctx.expressions().getText());
         }
         return ctx.getText();
