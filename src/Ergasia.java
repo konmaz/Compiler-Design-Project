@@ -67,6 +67,26 @@ public class Ergasia {
         System.out.println("---");
         System.out.println("#include <stdio.h>      /* Standard Library of Input and Output */");
         System.out.println("#include <complex.h>    /* Standard Library of Complex Numbers */");
+
+        for (Function key : metaglotistisCObj.entoles.keySet()) {// Add functions to header
+            StringBuilder cLikeArguments = new StringBuilder();
+            for (int i = 0; i<key.functionArguments.size() ;i++) {
+
+                Variable argFuncVarObj = key.functionArguments.get(i);
+                cLikeArguments.append(genTools.enum2CLike(argFuncVarObj.typosMetablitis));
+                cLikeArguments.append(' ');
+                cLikeArguments.append(argFuncVarObj.ID);
+                if (argFuncVarObj.isArray())
+                    cLikeArguments.append("[]");
+                if (i!= key.functionArguments.size()-1)
+                    cLikeArguments.append(", ");
+            }
+            //for (Variable arg: key.functionArguments)
+
+            //Function inside body commands
+            System.out.print(genTools.enum2CLike(key.returnType)+" "+key.name + "(" + cLikeArguments +");\n");
+        }
+
         for (Function key : metaglotistisCObj.entoles.keySet()){ // Printing entoles
             // Function declaration section
             StringBuilder cLikeArguments = new StringBuilder();
