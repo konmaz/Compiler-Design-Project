@@ -71,7 +71,7 @@ expressions : expressions COMMA expression | expression;
 expression : expression OROP expression
 | expression ANDOP expression
 | expression RELOP expression
-| expression POWEROP expression
+| <assoc=right> expression POWEROP expression
 | expression op=(MULOP|DIVOP) expression
 | expression op=ADDOP expression
 /*| expression ADDOP expression
