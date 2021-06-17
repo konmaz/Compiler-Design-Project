@@ -25,7 +25,7 @@ public class Function {
             nameOfVariables.append(item.typosMetablitis).append(" ").append(item.ID);
             if (item.dimensions != null)
                 nameOfVariables.append(Arrays.toString(item.dimensions));
-            nameOfVariables.append(",\t");
+            nameOfVariables.append(", ");
         }
         nameOfVariables.append(']');
 

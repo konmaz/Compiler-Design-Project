@@ -13,6 +13,7 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
     private Function lastFunctionObj;
     private Variable currentVariableInData; // For data (init variables)
     private boolean insideParameters = false;
+    private String currentVariableInDataName;
 
     /**
      * Default Contactor
@@ -32,7 +33,6 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
 
     /**
      * This method is called every time the Visitor visits the node enter enterDeclarations
-     * @param ctx
      */
     public void enterDeclarations(ErgasiaParser.DeclarationsContext ctx) {
         if (ctx.vars() != null) {
@@ -45,7 +45,6 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
 
     /**
      * This method is called every time the Visitor visits the node enter exitDeclarations
-     * @param ctx
      */
     public void exitDeclarations(ErgasiaParser.DeclarationsContext ctx) {
         if (ctx.vars() != null) {
@@ -54,11 +53,10 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
     }
     /**
      * This method is called every time the Visitor visits the node enter enterUndef_variable
-     * @param ctx
      */
     public void enterUndef_variable(ErgasiaParser.Undef_variableContext ctx) {
         if (variablesHashMap.get(lastFunctionObj).containsKey(ctx.ID().getText())){
-            errorList.add("Error at line "+ctx.getStart().getLine()+" The variable is already declared!");
+            errorList.add("Error at line "+ctx.getStart().getLine()+", the variable '"+ctx.ID().getText()+"' is already declared!");
         }
         String[] dimensions = null;
         if (ctx.dims() != null) {
@@ -72,7 +70,6 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
     }
     /**
      * This method is called every time the Visitor visits the node enter enterHeader
-     * @param ctx
      */
     public void enterHeader(ErgasiaParser.HeaderContext ctx) { // A new function declaration found
         //currentFunctionScope = ctx.ID().getSymbol().getText();
@@ -102,7 +99,6 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
 
     /**
      * This method is called every time the Visitor visits the node enter exitFormal_parameters
-     * @param ctx
      */
     public void exitFormal_parameters(ErgasiaParser.Formal_parametersContext ctx) {
         if (ctx.vars() != null)
@@ -111,7 +107,6 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
     }
     /**
      * This method is called every time the Visitor visits the node enter enterValue_list
-     * @param ctx
      */
     public void enterValue_list(ErgasiaParser.Value_listContext ctx) {
         //System.out.println("---");
@@ -119,6 +114,7 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
         String varName = ctx.parent.getChild(indexOfCurrentChildNode - 1).getText();
         //currentVariableInData = genTools.findObjByProperty(variablesHashMap.get(lastFunctionObj),ctx.parent.getChild(indexOfCurrentChildNode - 1).getText());
         currentVariableInData = variablesHashMap.get(lastFunctionObj).get(varName);
+        currentVariableInDataName = varName;
         //currentVariableInData = genTools.findObjByProperty(variablesHashMap.get(lastFunctionObj), ctx.parent.getChild(indexOfCurrentChildNode - 1).getText());
 
 //        for (Variable searchKey : variablesHashMap.get(lastFunctionObj))
@@ -140,7 +136,7 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
             for (String variableName : variablesNames) {
                 Variable varObj = variablesHashMap.get(lastFunctionObj).get(variableName);
                 if (varObj == null)
-                    errorList.add("Error at line " + ctx.getStart().getLine() + " Trying set variable '" + variableName + "' common without declaring it first ");
+                    errorList.add("Error at line " + ctx.getStart().getLine() + ", trying set variable '" + variableName + "' common without declaring it first. ");
                 else
                     varObj.setCommon(cblockID);
             }
@@ -155,7 +151,7 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
      */
     public void enterValue(ErgasiaParser.ValueContext ctx) {
         if (currentVariableInData == null)
-            errorList.add("The variable at line " + ctx.getStart().getLine() + " is not set but you tried to initialize it with data");
+            errorList.add("Error at line " + ctx.getStart().getLine() + ", the variable '"+currentVariableInDataName+"' is not declared \n\t previously and can't be initialized ");
         else {
             currentVariableInData.initialValues.add(ctx.getText());
 

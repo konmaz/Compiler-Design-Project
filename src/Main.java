@@ -52,7 +52,7 @@ public class Main {
         StringBuilder textToAdd = new StringBuilder();
         if (metaglotistisListenerObj.errorList.size() != 0) {
             textToAdd.append("--------------------------------------\n");
-            textToAdd.append("\tErrors\n");
+            textToAdd.append("\tSemantic Errors Found\n");
             textToAdd.append("--------------------------------------\n");
             for (String item : metaglotistisListenerObj.errorList) {
                 textToAdd.append(item);
