@@ -25,7 +25,6 @@ import org.antlr.v4.gui.TreeViewer;
 public class Ergasia {
     public static void main( String[] args) throws Exception
     {
-
 //        //ErgasiaLexer lexer = new ErgasiaLexer( new ANTLRFileStream(args[0]));
 //        ErgasiaLexer lexer = new ErgasiaLexer(new ANTLRInputStream("if (x.gt.0.(.and.x.lt.a(i))) y(i) = i**x"));
 //        ErgasiaParser parser = new ErgasiaParser(new CommonTokenStream(lexer));
@@ -116,7 +115,7 @@ public class Ergasia {
         textArea.setEditable(false);
         p2.setBorder(new TitledBorder( new EtchedBorder(), "Πίνακας Συμβόλων" ));
         p2.setLayout(new BorderLayout());
-        p3.setBorder(new TitledBorder( new EtchedBorder(), "Πηγαίος Κώδικας" ));
+        p3.setBorder(new TitledBorder( new EtchedBorder(), "Πηγαίος Κώδικας '"+args[0]+"'" ));
         p3.setLayout(new BorderLayout());
 
         JScrollPane scroll = new JScrollPane(textArea);
@@ -124,7 +123,6 @@ public class Ergasia {
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         JTextArea sourceText = new JTextArea(sourceCodeStr);
-
         sourceText.setFont(new Font("Courier New", Font.PLAIN, 20));
         sourceText.setEditable(false);
 

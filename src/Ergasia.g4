@@ -208,11 +208,10 @@ RCONST:(
     ([0][X_x_A_O][X_x_A]*[0-9]*DOT[0-9]*)|
     ([0][B_b][0-1]*DOT[0-1]*))|
     ([0-9]+DOT?[e]ADDOP?[0-9]+)
-
-
     ;
 
 */
+
 fragment HEXCHARS:[A-F]|[a-f];
 fragment HEXNUMBERS :NUM*HEXCHARS*NUM*HEXCHARS*;
 fragment ESCAPE_CHARS : '\\'('n'|'f'|'t'|'r'|'b'|'b'|'v');
