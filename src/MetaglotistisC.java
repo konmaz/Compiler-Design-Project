@@ -1,3 +1,5 @@
+import org.stringtemplate.v4.ST;
+
 import java.util.*;
 
 /**
@@ -15,11 +17,13 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     private final LinkedList<typosVarENUM> queueForDeclarations;
     private Variable currentVariableInData; // For data (init variables)
     private boolean insideParameters = false;
+    public LinkedList<String> errorList;
 
     /**
      * Default Contactor
      */
     public MetaglotistisC() {
+        errorList = new LinkedList<>();
         lastFunctionObj = new Function("main", typosVarENUM.typVOID); // Because there is not a main header I add it manually
 
         queueForDeclarations = new LinkedList<>();
@@ -130,7 +134,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
             for (String variableName : variablesNames){
                 Variable varObj = variablesHashMap.get(lastFunctionObj).get(variableName);
                 if (varObj == null)
-                    System.out.println("Error at line "+ctx.getStart().getLine()+" Trying set variable  '"+variableName+"' common without declaring it first ");
+                    errorList.add("Error at line "+ctx.getStart().getLine()+" Trying set variable '"+variableName+"' common without declaring it first ");
                 else
                     varObj.setCommon(cblockID);
             }

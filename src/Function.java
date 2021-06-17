@@ -31,7 +31,7 @@ public class Function {
         nameOfVariables.append(']');
 
         return "Function{" +
-                "\n\t ID               = '" + name + '\'' +
+                "\n\t ID                = '" + name + '\'' +
                 ",\n\t functionReturnType = " + returnType +
                 ",\n\t functionArguments  = " + nameOfVariables +
                 "\n\t}";

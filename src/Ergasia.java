@@ -34,65 +34,66 @@ public class Ergasia {
         CommonTokenStream tokens = new CommonTokenStream( lexer );
         ErgasiaParser parser = new ErgasiaParser( tokens );
         ParseTree tree = parser.program();
-        ergListener elekt = new ergListener();
         ParseTreeWalker walker = new ParseTreeWalker();
-        ergListener bstVst = new ergListener();
 
+        MetaglotistisC metaglotistisCObj = new MetaglotistisC();
+
+        walker.walk(metaglotistisCObj, tree);
         // GUI Section
-//        JFrame frame = new JFrame("Simple Fortran - Syntax Tree");
-//        JPanel mainPanel = new JPanel();
-//        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
-//
-//        JPanel p1 = new JPanel();
-//        JPanel p2 = new JPanel();
-//
-//        TreeViewer viewer = new TreeViewer(Arrays.asList(parser.getRuleNames()),tree);
-//        viewer.setTextColor(Color.DARK_GRAY);
-//        viewer.setScale(1.5);
-//
-//        //mainPanel.setForeground(new Color(58, 149, 14));
-//
-//        p1.add(viewer);
-//        JTextArea textArea = new JTextArea("------------------------\n");
-//
-//        textArea.setFont(new Font("Courier New", Font.PLAIN, 20));
-//
-//        textArea.setEditable(false);
-//        p2.setBorder(new TitledBorder( new EtchedBorder(), "Πίνακας Συμβόλων" ));
-//        p2.setLayout(new BorderLayout());
-//        JScrollPane scroll = new JScrollPane(textArea);
-//
-//        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-//        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-//        p1.setBackground(Color.WHITE);
-//        p2.add(scroll);
-//        //p2.setBackground(Color.RED);
-//        //p2.setSize(new Dimension(500,100));
-//
-//        //mainPanel.add(p1);
-//
-//
-//        JScrollPane jScrollPane = new JScrollPane(p1);
-//        jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-//        jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-//
-//
-//        //p2.setSize(textArea.getMinimumSize());
-//        //jScrollPane.setMinimumSize(new Dimension(500,10));
-//        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,jScrollPane, p2);
-//        splitPane.setOneTouchExpandable(true);
-//        splitPane.setResizeWeight(0.8);
-//        //splitPane.setDividerLocation(500);
-//
-//        mainPanel.add(splitPane);
-//
-//        frame.add(mainPanel);
-//        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setMinimumSize(new Dimension(250,250));
-//        frame.setVisible(true);
-//        frame.toFront();
-//        frame.toFront();
+        JFrame frame = new JFrame("Simple Fortran - Syntax Tree - Semantic Analysis");
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
+
+        JPanel p1 = new JPanel();
+        JPanel p2 = new JPanel();
+
+        TreeViewer viewer = new TreeViewer(Arrays.asList(parser.getRuleNames()),tree);
+        viewer.setTextColor(Color.DARK_GRAY);
+        viewer.setScale(1.5);
+
+        //mainPanel.setForeground(new Color(58, 149, 14));
+
+        p1.add(viewer);
+        JTextArea textArea = new JTextArea("------------------------\n");
+
+        textArea.setFont(new Font("Courier New", Font.PLAIN, 20));
+
+        textArea.setEditable(false);
+        p2.setBorder(new TitledBorder( new EtchedBorder(), "Πίνακας Συμβόλων" ));
+        p2.setLayout(new BorderLayout());
+        JScrollPane scroll = new JScrollPane(textArea);
+
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        p1.setBackground(Color.WHITE);
+        p2.add(scroll);
+        //p2.setBackground(Color.RED);
+        //p2.setSize(new Dimension(500,100));
+
+        //mainPanel.add(p1);
+
+
+        JScrollPane jScrollPane = new JScrollPane(p1);
+        jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+
+        //p2.setSize(textArea.getMinimumSize());
+        //jScrollPane.setMinimumSize(new Dimension(500,10));
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,jScrollPane, p2);
+        splitPane.setOneTouchExpandable(true);
+        splitPane.setResizeWeight(0.8);
+        //splitPane.setDividerLocation(500);
+
+        mainPanel.add(splitPane);
+
+        frame.add(mainPanel);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setMinimumSize(new Dimension(250,250));
+        frame.setVisible(true);
+        frame.toFront();
+        frame.toFront();
 
 
         //ErgasiaLexer.VOCABULARY.getSymbolicName()
@@ -104,8 +105,7 @@ public class Ergasia {
             //System.out.println(item.ID + ", " + item.typosMetablitis);
 
 //
-        MetaglotistisC metaglotistisCObj = new MetaglotistisC();
-        walker.walk(metaglotistisCObj, tree);
+
         System.out.println("------------------------");
         System.out.println("------------------------");
         System.out.println(genTools.ANSI_RED +"Symbol Table - Variables" + genTools.ANSI_RESET);
