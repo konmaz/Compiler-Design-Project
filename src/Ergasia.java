@@ -39,21 +39,28 @@ public class Ergasia {
         ergListener bstVst = new ergListener();
 
 
+        // GUI Section
         JFrame frame = new JFrame("Simple Fortran - Syntax Tree");
-        JPanel panel = new JPanel();
+        JPanel mainPanel = new JPanel();
+        //mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.X_AXIS));
+
+        JPanel paintPanel = new JPanel();
+        JPanel textPanel = new JPanel();
+
         TreeViewer viewer = new TreeViewer(Arrays.asList(
                 parser.getRuleNames()),tree);
-
-
-        viewer.setScale(1.5); // Scale a little
-
+        viewer.setScale(5);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        panel.setForeground(new Color(58, 149, 14));
-        //panel.setBackground(Color.DARK_GRAY);
-        panel.add(viewer);
-        JScrollPane jScrollPane = new JScrollPane(panel);
-// only a configuration to the jScrollPane...
-        jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        mainPanel.setForeground(new Color(58, 149, 14));
+
+        paintPanel.add(viewer);
+        textPanel.add(new JTextArea("hello"));
+
+        mainPanel.add(paintPanel);
+        mainPanel.add(textPanel);
+
+        JScrollPane jScrollPane = new JScrollPane(paintPanel);
+        jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         frame.getContentPane().add(jScrollPane);
