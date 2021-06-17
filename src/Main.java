@@ -143,7 +143,8 @@ public class Main {
         frame.add(mainPanel);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setMinimumSize(new Dimension(250, 250));
+        frame.setMinimumSize(new Dimension(500, 500));
+        frame.pack();
         frame.setVisible(true);
         frame.toFront();
         frame.toFront();
