@@ -13,8 +13,7 @@ public class Function {
         this.returnType = returnType;
     }
 
-    public void addFunctionArgument(Variable variableObj)
-    {
+    public void addFunctionArgument(Variable variableObj) {
         functionArguments.add(variableObj);
     }
 
@@ -22,7 +21,7 @@ public class Function {
     public String toString() {
         StringBuilder nameOfVariables = new StringBuilder();
         nameOfVariables.append("[");
-        for (Variable item : functionArguments){
+        for (Variable item : functionArguments) {
             nameOfVariables.append(item.typosMetablitis).append(" ").append(item.ID);
             if (item.dimensions != null)
                 nameOfVariables.append(Arrays.toString(item.dimensions));

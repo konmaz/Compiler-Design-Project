@@ -9,9 +9,7 @@ public class Variable {
     public String[] dimensions; // 1D,2D,3D...
     public LinkedList<String> initialValues;
     public String common = null;
-    public void setCommon(String common){
-        this.common = common;
-    }
+
     public Variable(String name, typosVarENUM tp, Function scope, String[] dimensions) {
         this.ID = name;
         this.typosMetablitis = tp;
@@ -27,10 +25,16 @@ public class Variable {
             this.thesisPinaka *= item;
          */
     }
+
     public Variable(String name) {
         this.ID = name;
     }
-    public boolean isArray(){
+
+    public void setCommon(String common) {
+        this.common = common;
+    }
+
+    public boolean isArray() {
         return dimensions != null;
     }
 
@@ -43,7 +47,7 @@ public class Variable {
                 ",\n\t common     = '" + this.common + '\'' +
                 ",\n\t dimensions = " + Arrays.toString(dimensions) +
                 ",\n\t is Array   = " + this.isArray() +
-                ",\n\t initValues = " + Arrays.toString(initialValues.toArray())+
+                ",\n\t initValues = " + Arrays.toString(initialValues.toArray()) +
                 "\n\t}";
     }
 

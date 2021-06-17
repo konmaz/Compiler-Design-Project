@@ -1,28 +1,23 @@
-import org.stringtemplate.v4.ST;
-
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 /**
  * Class of MetaglotisticC has methods that are being called when node is visited
  */
-public class MetaglotistisC extends ErgasiaBaseListener {
-
-    public LinkedHashMap<Function, LinkedHashMap<String,Variable>> variablesHashMap; // A LinkedHashMap that contains <key:Function Name, A linked HashMap that contains <Var name, Var object>>
-
-
-    public LinkedHashMap<String, Function> functionsHashMap; // A hash map that contains <key:Name of function, A list of function objects
-
-    private Function lastFunctionObj;
+public class MetaglotistisListener extends ErgasiaBaseListener {
 
     private final LinkedList<typosVarENUM> queueForDeclarations;
+    public LinkedHashMap<Function, LinkedHashMap<String, Variable>> variablesHashMap; // A LinkedHashMap that contains <key:Function Name, A linked HashMap that contains <Var name, Var object>>
+    public LinkedHashMap<String, Function> functionsHashMap; // A hash map that contains <key:Name of function, A list of function objects
+    public LinkedList<String> errorList;
+    private Function lastFunctionObj;
     private Variable currentVariableInData; // For data (init variables)
     private boolean insideParameters = false;
-    public LinkedList<String> errorList;
 
     /**
      * Default Contactor
      */
-    public MetaglotistisC() {
+    public MetaglotistisListener() {
         errorList = new LinkedList<>();
         lastFunctionObj = new Function("main", typosVarENUM.typVOID); // Because there is not a main header I add it manually
 
@@ -35,6 +30,10 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         functionsHashMap.put(lastFunctionObj.name, lastFunctionObj);
     }
 
+    /**
+     * This method is called every time the Visitor visits the node enter enterDeclarations
+     * @param ctx
+     */
     public void enterDeclarations(ErgasiaParser.DeclarationsContext ctx) {
         if (ctx.vars() != null) {
             //queueForDeclarations.add(typosVarENUM.typVOID);
@@ -44,42 +43,37 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         }
     }
 
+    /**
+     * This method is called every time the Visitor visits the node enter exitDeclarations
+     * @param ctx
+     */
     public void exitDeclarations(ErgasiaParser.DeclarationsContext ctx) {
         if (ctx.vars() != null) {
             queueForDeclarations.removeLast();
         }
     }
-
+    /**
+     * This method is called every time the Visitor visits the node enter enterUndef_variable
+     * @param ctx
+     */
     public void enterUndef_variable(ErgasiaParser.Undef_variableContext ctx) {
-        //if (variablesHashMap.containsKey(ctx.ID().getText())){
-        //  System.out.println("Η μεταβλητή '"+ctx.ID().getText()+ "' έχει δηλώθεί προηγουμένως ως "+ variablesHashMap.get(ctx.ID().getText()));
-        //System.exit(-1);
-        //}
+        if (variablesHashMap.get(lastFunctionObj).containsKey(ctx.ID().getText())){
+            errorList.add("Error at line "+ctx.getStart().getLine()+" The variable is already declared!");
+        }
         String[] dimensions = null;
         if (ctx.dims() != null) {
-            //dimensions = ctx.dims().getText().split(",");
-            //System.out.println(Arrays.toString(dimensions));
             dimensions = ctx.dims().getText().split(",");
         }
-        if (!insideParameters) {
-            Variable varObj = new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), lastFunctionObj, dimensions);
-            variablesHashMap.get(lastFunctionObj).put(varObj.ID,varObj);
-                //System.out.println("\t"+ genTools.enum2CLike(queueForDeclarations.getLast())+" "+ctx.ID().getText()+";");
-        } else { // insideParameters == True
-            Variable varObj = new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), lastFunctionObj, dimensions);
+        Variable varObj = new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), lastFunctionObj, dimensions);
+        if (insideParameters) { // insideParameters == True
             functionsHashMap.get(lastFunctionObj.name).addFunctionArgument(varObj);
-            variablesHashMap.get(lastFunctionObj).put(varObj.ID,varObj);
         }
-        //dilomenesVar.get(currentVarType.toLowerCase()).add(ctx.ID().getText());
-        //System.out.println(ctx.ID().getText());
+        variablesHashMap.get(lastFunctionObj).put(varObj.ID, varObj);
     }
-
-    //    public void exitUndef_variable(ErgasiaParser.Undef_variableContext ctx) {
-//        if (ignoreListeners)
-//            return;
-//        //entoles.get(lastFunctionObj).getLast().append("?");
-//        entoles.get(lastFunctionObj).add(new StringBuilder());
-//    }
+    /**
+     * This method is called every time the Visitor visits the node enter enterHeader
+     * @param ctx
+     */
     public void enterHeader(ErgasiaParser.HeaderContext ctx) { // A new function declaration found
         //currentFunctionScope = ctx.ID().getSymbol().getText();
         typosVarENUM functionReturnType = typosVarENUM.typVOID; // Set default return type to VOID
@@ -92,24 +86,33 @@ public class MetaglotistisC extends ErgasiaBaseListener {
             lastFunctionObj = new Function(ctx.ID().getSymbol().getText(), functionReturnType);
             functionsHashMap.put(lastFunctionObj.name, lastFunctionObj);
         }
-        if (!variablesHashMap.containsKey(lastFunctionObj)){ // If variablesHashMap don't contains the function object as key add it
+        if (!variablesHashMap.containsKey(lastFunctionObj)) { // If variablesHashMap don't contains the function object as key add it
             variablesHashMap.put(lastFunctionObj, new LinkedHashMap<>());
         }
     }
-
+    /**
+     * This method is called every time the Visitor visits the node enter enterFormal_parameters
+     * @param ctx
+     */
     public void enterFormal_parameters(ErgasiaParser.Formal_parametersContext ctx) {
-        //System.out.println(ctx.getText());
         if (ctx.vars() != null)
             queueForDeclarations.add(genTools.getEnumFromString(ctx.type().getText()));
         insideParameters = true;
     }
 
+    /**
+     * This method is called every time the Visitor visits the node enter exitFormal_parameters
+     * @param ctx
+     */
     public void exitFormal_parameters(ErgasiaParser.Formal_parametersContext ctx) {
         if (ctx.vars() != null)
             queueForDeclarations.removeLast();
         insideParameters = false;
     }
-
+    /**
+     * This method is called every time the Visitor visits the node enter enterValue_list
+     * @param ctx
+     */
     public void enterValue_list(ErgasiaParser.Value_listContext ctx) {
         //System.out.println("---");
         int indexOfCurrentChildNode = ctx.getParent().children.indexOf(ctx);
@@ -127,14 +130,17 @@ public class MetaglotistisC extends ErgasiaBaseListener {
         //System.out.println("---");
     }
 
+    /**
+     * This method is called every time the Visitor visits the node enter Cblock (common)
+     */
     public void enterCblock(ErgasiaParser.CblockContext ctx) {
-        if (ctx.ID()!=null){
+        if (ctx.ID() != null) {
             String cblockID = ctx.ID().getText();
-            String [] variablesNames = ctx.id_list().getText().split(",");
-            for (String variableName : variablesNames){
+            String[] variablesNames = ctx.id_list().getText().split(",");
+            for (String variableName : variablesNames) {
                 Variable varObj = variablesHashMap.get(lastFunctionObj).get(variableName);
                 if (varObj == null)
-                    errorList.add("Error at line "+ctx.getStart().getLine()+" Trying set variable '"+variableName+"' common without declaring it first ");
+                    errorList.add("Error at line " + ctx.getStart().getLine() + " Trying set variable '" + variableName + "' common without declaring it first ");
                 else
                     varObj.setCommon(cblockID);
             }
@@ -150,7 +156,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
     public void enterValue(ErgasiaParser.ValueContext ctx) {
         if (currentVariableInData == null)
             errorList.add("The variable at line " + ctx.getStart().getLine() + " is not set but you tried to initialize it with data");
-        else{
+        else {
             currentVariableInData.initialValues.add(ctx.getText());
 
 //        if (currentVariableInData.typosMetablitis.equals(typosVarENUM.typCOMPLEX))
