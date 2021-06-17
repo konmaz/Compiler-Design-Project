@@ -8,7 +8,10 @@ public class Variable {
     public Function scope;
     public String[] dimensions; // 1D,2D,3D...
     public LinkedList<String> initialValues;
-
+    public String common = null;
+    public void setCommon(String common){
+        this.common = common;
+    }
     public Variable(String name, typosVarENUM tp, Function scope, String[] dimensions) {
         this.ID = name;
         this.typosMetablitis = tp;
@@ -34,12 +37,13 @@ public class Variable {
     @Override
     public String toString() {
         return "Variable{" +
-                "\n\t ID='" + ID + '\'' +
-                ",\n\t typosMetablitis=" + typosMetablitis +
-                ",\n\t scope='" + scope.name + '\'' +
-                ",\n\t dimensions=" + Arrays.toString(dimensions) +
-                ",\n\t is Array=" + this.isArray() +
-                ",\n\t initialValue=" + Arrays.toString(initialValues.toArray())+
+                "\n\t ID         = '" + ID + '\'' +
+                ",\n\t varType    = " + typosMetablitis +
+                ",\n\t scope      = '" + scope.name + '\'' +
+                ",\n\t common     = '" + this.common + '\'' +
+                ",\n\t dimensions = " + Arrays.toString(dimensions) +
+                ",\n\t is Array   = " + this.isArray() +
+                ",\n\t initValues = " + Arrays.toString(initialValues.toArray())+
                 "\n\t}";
     }
 

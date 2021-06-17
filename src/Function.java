@@ -23,14 +23,17 @@ public class Function {
         StringBuilder nameOfVariables = new StringBuilder();
         nameOfVariables.append("[");
         for (Variable item : functionArguments){
-            nameOfVariables.append(item.typosMetablitis).append(" ").append(Arrays.toString(item.dimensions)).append(":").append(item.ID).append(", \t");
+            nameOfVariables.append(item.typosMetablitis).append(" ").append(item.ID);
+            if (item.dimensions != null)
+                nameOfVariables.append(Arrays.toString(item.dimensions));
+            nameOfVariables.append(",\t");
         }
         nameOfVariables.append(']');
 
         return "Function{" +
-                "\n\t name='" + name + '\'' +
-                ",\n\t returnType=" + returnType +
-                ",\n\t functionArguments=" + nameOfVariables +
+                "\n\t ID               = '" + name + '\'' +
+                ",\n\t functionReturnType = " + returnType +
+                ",\n\t functionArguments  = " + nameOfVariables +
                 "\n\t}";
     }
 
