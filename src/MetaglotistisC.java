@@ -149,7 +149,7 @@ public class MetaglotistisC extends ErgasiaBaseListener {
      */
     public void enterValue(ErgasiaParser.ValueContext ctx) {
         if (currentVariableInData == null)
-            System.out.println("The variable at line " + ctx.getStart().getLine() + " is not set but you tried to initialize it with data");
+            errorList.add("The variable at line " + ctx.getStart().getLine() + " is not set but you tried to initialize it with data");
         else{
             currentVariableInData.initialValues.add(ctx.getText());
 
