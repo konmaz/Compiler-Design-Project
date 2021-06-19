@@ -192,14 +192,13 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
     public void enterVariable(ErgasiaParser.VariableContext ctx) {
         if (ctx.ID() != null){
             String ID = ctx.ID().getText();
-            if (!variablesHashMap.get(lastFunctionObj).containsKey(ID) && !commonVariables.contains(ID) ){ // Not a variable  in current scope AND not a common (global) variable
+            if (!variablesHashMap.get(lastFunctionObj).containsKey(ID) && !commonVariables.contains(ID) && !lastFunctionObj.name.equals(ID)){ // Not a variable  in current scope AND not a common (global) variable AND not a recursive call
                 errorList.add(MessageFormat.format("Error at line {0}, undeclared identifier ''{1}''\n", ctx.getStart().getLine(), ID));
                 lookAheadForFunctions.put(ID, errorList.size()-1); //maybe it is a function add it to lookAhead
             }
         }
 
     }
-
     public void setErrorLinesSet(){
         for (String item : errorList){
             Pattern p = Pattern.compile("\\d+");
