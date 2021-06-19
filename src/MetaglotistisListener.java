@@ -1,3 +1,5 @@
+import com.sun.org.apache.xpath.internal.objects.XNull;
+
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
@@ -14,7 +16,7 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
     private Variable currentVariableInData; // For data (init variables)
     private boolean insideParameters = false;
     private String currentVariableInDataName;
-
+    private LinkedHashMap<String,String> lookAheadForFunctions;
     /**
      * Default Contactor
      */
@@ -143,7 +145,6 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
 
         }
     }
-
 
     /**
      * This method is called every time the Visitor visits the node value in the tree
