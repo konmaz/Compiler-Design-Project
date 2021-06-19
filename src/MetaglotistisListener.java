@@ -1,5 +1,7 @@
 import com.sun.org.apache.xpath.internal.objects.XNull;
+import org.stringtemplate.v4.ST;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
@@ -16,14 +18,14 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
     private Variable currentVariableInData; // For data (init variables)
     private boolean insideParameters = false;
     private String currentVariableInDataName;
-    private LinkedHashMap<String,String> lookAheadForFunctions;
+    public LinkedHashMap<String, Integer> lookAheadForFunctions; // Keeps the function names for back-patching
     /**
      * Default Contactor
      */
     public MetaglotistisListener() {
         errorList = new LinkedList<>();
         lastFunctionObj = new Function("main", typosVarENUM.typVOID); // Because there is not a main header I add it manually
-
+        lookAheadForFunctions = new LinkedHashMap<>();
         queueForDeclarations = new LinkedList<>();
 
         variablesHashMap = new LinkedHashMap<>();
@@ -82,6 +84,12 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
         }
 
         if (!functionsHashMap.containsKey(ctx.ID().getSymbol().getText())) {
+            String functionID = ctx.ID().getSymbol().getText();
+            if (lookAheadForFunctions.containsKey(functionID)){ // After all is was a function
+                int pos = lookAheadForFunctions.get(functionID);
+                errorList.remove(pos);
+                lookAheadForFunctions.remove(functionID);
+            }
             lastFunctionObj = new Function(ctx.ID().getSymbol().getText(), functionReturnType);
             functionsHashMap.put(lastFunctionObj.name, lastFunctionObj);
         }
@@ -168,4 +176,15 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
         }
         // If data init value is not in the if above just ignore it
     }
+    public void enterVariable(ErgasiaParser.VariableContext ctx) {
+        if (ctx.ID() != null){
+            String ID = ctx.ID().getText();
+            if (!variablesHashMap.get(lastFunctionObj).containsKey(ID)){ // Not a variable name , maybe it is a function
+                errorList.add("Error at line" + ctx.getStart().getLine() + ", undeclared unit '"+ID+"' is not a function or a variable.");
+                lookAheadForFunctions.put(ID, errorList.size()-1);
+            }
+        }
+
+    }
+
 }

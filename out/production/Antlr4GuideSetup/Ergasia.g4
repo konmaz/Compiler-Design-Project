@@ -61,9 +61,11 @@ simple_statement : assignment
 
 assignment : variable ASSIGN expression;
 
-variable : ID LPAREN expressions RPAREN
-| LISTFUNC LPAREN expression RPAREN
+variable : ID LPAREN expressions RPAREN |
+LISTFUNC LPAREN expression RPAREN
 | ID;
+
+LISTFUNC :([C](([A][D]*)|[D]+)[R])|[c](([a][d]*)|[d]+)[r];
 
 expressions : expressions COMMA expression | expression;
 
@@ -214,7 +216,7 @@ RCONST:(
 
 fragment HEXCHARS:[A-F]|[a-f];
 fragment HEXNUMBERS :NUM*HEXCHARS*NUM*HEXCHARS*;
-fragment ESCAPE_CHARS : '\\'('n'|'f'|'t'|'r'|'b'|'b'|'v');
+fragment ESCAPE_CHARS : '\\'('n'|'f'|'t'|'r'|'b'|'v');
 
 fragment BINARYNUMBERS :
 (
@@ -321,9 +323,6 @@ ADDOP:'+'|'-';
 MULOP:'*';
 DIVOP:'/';
 POWEROP:'**';
-
-/* Alles lektikes monades */
-LISTFUNC : [C](([A][D]*)|[D]+)[R];
 
 LPAREN:'(';
 RPAREN:')';

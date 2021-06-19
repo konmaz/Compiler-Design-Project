@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.Element;
 import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -49,6 +50,7 @@ public class Main {
         //System.out.println(item.ID + ", " + item.typosMetablitis);
 
 //
+
         StringBuilder textToAdd = new StringBuilder();
         if (metaglotistisListenerObj.errorList.size() != 0) {
             textToAdd.append("--------------------------------------\n");
@@ -113,11 +115,27 @@ public class Main {
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-        JTextArea sourceText = new JTextArea(sourceCodeStr);
-        sourceText.setFont(new Font("Courier New", Font.PLAIN, 20));
-        sourceText.setEditable(false);
+        JTextArea sourceTextTA = new JTextArea(sourceCodeStr);
+        JTextArea lines = new JTextArea("1");
+        lines.setBackground(Color.lightGray);
+        lines.setEditable(false);
 
-        JScrollPane scrollSource = new JScrollPane(sourceText);
+        sourceTextTA.setEditable(false);
+        int caretPosition = sourceTextTA.getDocument().getLength();
+        Element root = sourceTextTA.getDocument().getDefaultRootElement();
+        String text = "1" + System.getProperty("line.separator");
+        for(int i = 2; i < root.getElementIndex( caretPosition ) + 2; i++){
+            text += i + System.getProperty("line.separator");
+        }
+        lines.setText(text);
+
+
+        sourceTextTA.setFont(new Font("Courier New", Font.PLAIN, 20));
+        lines.setFont(new Font("Courier New", Font.PLAIN, 20));
+
+
+        JScrollPane scrollSource = new JScrollPane(sourceTextTA);
+        scrollSource.setRowHeaderView(lines);
         scrollSource.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollSource.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         p1.setBackground(Color.WHITE);
