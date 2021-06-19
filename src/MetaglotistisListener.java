@@ -1,15 +1,20 @@
 import com.sun.org.apache.xpath.internal.objects.XNull;
+import org.antlr.runtime.BitSet;
 import org.stringtemplate.v4.ST;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class of MetaglotisticC has methods that are being called when node is visited
  */
 public class MetaglotistisListener extends ErgasiaBaseListener {
-
+    private final HashSet<String> commonVariables;
     private final LinkedList<typosVarENUM> queueForDeclarations;
     public LinkedHashMap<Function, LinkedHashMap<String, Variable>> variablesHashMap; // A LinkedHashMap that contains <key:Function Name, A linked HashMap that contains <Var name, Var object>>
     public LinkedHashMap<String, Function> functionsHashMap; // A hash map that contains <key:Name of function, A list of function objects
@@ -19,10 +24,14 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
     private boolean insideParameters = false;
     private String currentVariableInDataName;
     public LinkedHashMap<String, Integer> lookAheadForFunctions; // Keeps the function names for back-patching
+    public final HashSet<Integer> errorLines;
+
     /**
      * Default Contactor
      */
     public MetaglotistisListener() {
+        errorLines = new HashSet<>();
+        commonVariables = new HashSet<>();
         errorList = new LinkedList<>();
         lastFunctionObj = new Function("main", typosVarENUM.typVOID); // Because there is not a main header I add it manually
         lookAheadForFunctions = new LinkedHashMap<>();
@@ -60,17 +69,18 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
      */
     public void enterUndef_variable(ErgasiaParser.Undef_variableContext ctx) {
         if (variablesHashMap.get(lastFunctionObj).containsKey(ctx.ID().getText())){
-            errorList.add("Error at line "+ctx.getStart().getLine()+", the variable '"+ctx.ID().getText()+"' is already declared!");
+            errorList.add(MessageFormat.format("Error at line {0}, the variable ''{1}'' is already declared as {2}.\n", ctx.getStart().getLine(), ctx.ID().getText(),variablesHashMap.get(lastFunctionObj).get(ctx.ID().getText()).typosMetablitis));
+        }else {
+            String[] dimensions = null;
+            if (ctx.dims() != null) {
+                dimensions = ctx.dims().getText().split(",");
+            }
+            Variable varObj = new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), lastFunctionObj, dimensions);
+            if (insideParameters) { // insideParameters == True
+                functionsHashMap.get(lastFunctionObj.name).addFunctionArgument(varObj);
+            }
+            variablesHashMap.get(lastFunctionObj).put(varObj.ID, varObj);
         }
-        String[] dimensions = null;
-        if (ctx.dims() != null) {
-            dimensions = ctx.dims().getText().split(",");
-        }
-        Variable varObj = new Variable(ctx.ID().getText(), queueForDeclarations.getLast(), lastFunctionObj, dimensions);
-        if (insideParameters) { // insideParameters == True
-            functionsHashMap.get(lastFunctionObj.name).addFunctionArgument(varObj);
-        }
-        variablesHashMap.get(lastFunctionObj).put(varObj.ID, varObj);
     }
     /**
      * This method is called every time the Visitor visits the node enter enterHeader
@@ -99,7 +109,6 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
     }
     /**
      * This method is called every time the Visitor visits the node enter enterFormal_parameters
-     * @param ctx
      */
     public void enterFormal_parameters(ErgasiaParser.Formal_parametersContext ctx) {
         if (ctx.vars() != null)
@@ -145,10 +154,13 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
             String[] variablesNames = ctx.id_list().getText().split(",");
             for (String variableName : variablesNames) {
                 Variable varObj = variablesHashMap.get(lastFunctionObj).get(variableName);
-                if (varObj == null)
-                    errorList.add("Error at line " + ctx.getStart().getLine() + ", trying set variable '" + variableName + "' common without declaring it first. ");
-                else
+                if (varObj == null){
+                    errorList.add(MessageFormat.format("Error at line {0}, trying set variable ''{1}'' common without declaring it first.\n", ctx.getStart().getLine(), variableName));
+                }
+                else{
+                    commonVariables.add(varObj.ID);
                     varObj.setCommon(cblockID);
+                }
             }
 
         }
@@ -159,8 +171,9 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
      * It is used to parse the command 'data' for variable initialization
      */
     public void enterValue(ErgasiaParser.ValueContext ctx) {
-        if (currentVariableInData == null)
-            errorList.add("Error at line " + ctx.getStart().getLine() + ", the variable '"+currentVariableInDataName+"' is not declared \n\t previously and can't be initialized ");
+        if (currentVariableInData == null){
+            errorList.add(MessageFormat.format("Error at line {0}, the variable ''{1}'' is not declared previously and can''t be initialized.\n", ctx.getStart().getLine(), currentVariableInDataName));
+        }
         else {
             currentVariableInData.initialValues.add(ctx.getText());
 
@@ -179,9 +192,20 @@ public class MetaglotistisListener extends ErgasiaBaseListener {
     public void enterVariable(ErgasiaParser.VariableContext ctx) {
         if (ctx.ID() != null){
             String ID = ctx.ID().getText();
-            if (!variablesHashMap.get(lastFunctionObj).containsKey(ID)){ // Not a variable name , maybe it is a function
-                errorList.add("Error at line" + ctx.getStart().getLine() + ", undeclared unit '"+ID+"' is not a function or a variable.");
-                lookAheadForFunctions.put(ID, errorList.size()-1);
+            if (!variablesHashMap.get(lastFunctionObj).containsKey(ID) && !commonVariables.contains(ID) ){ // Not a variable  in current scope AND not a common (global) variable
+                errorList.add(MessageFormat.format("Error at line {0}, undeclared identifier ''{1}''\n", ctx.getStart().getLine(), ID));
+                lookAheadForFunctions.put(ID, errorList.size()-1); //maybe it is a function add it to lookAhead
+            }
+        }
+
+    }
+
+    public void setErrorLinesSet(){
+        for (String item : errorList){
+            Pattern p = Pattern.compile("\\d+");
+            Matcher m = p.matcher(item);
+            if(m.find()) {
+                errorLines.add(Integer.valueOf(m.group()));
             }
         }
 

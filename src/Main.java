@@ -51,6 +51,7 @@ public class Main {
 
 //
 
+
         StringBuilder textToAdd = new StringBuilder();
         if (metaglotistisListenerObj.errorList.size() != 0) {
             textToAdd.append("--------------------------------------\n");
@@ -79,7 +80,7 @@ public class Main {
             textToAdd.append(functionObj.toString());
             textToAdd.append("\n\n");
         }
-
+        metaglotistisListenerObj.setErrorLinesSet();
 
         // GUI Section
         JFrame frame = new JFrame("Simple Fortran - Syntax Tree ");
@@ -106,7 +107,7 @@ public class Main {
         textArea.setFont(new Font("Courier New", Font.PLAIN, 20));
 
         textArea.setEditable(false);
-        p2.setBorder(new TitledBorder(new EtchedBorder(), "Πίνακας Συμβόλων"));
+        p2.setBorder(new TitledBorder(new EtchedBorder(), "Πίνακας Συμβόλων και Σημασιολογικά Σφάλματα"));
         p2.setLayout(new BorderLayout());
         p3.setBorder(new TitledBorder(new EtchedBorder(), "Πηγαίος Κώδικας '" + args[0] + "'"));
         p3.setLayout(new BorderLayout());
@@ -123,11 +124,15 @@ public class Main {
         sourceTextTA.setEditable(false);
         int caretPosition = sourceTextTA.getDocument().getLength();
         Element root = sourceTextTA.getDocument().getDefaultRootElement();
-        String text = "1" + System.getProperty("line.separator");
-        for(int i = 2; i < root.getElementIndex( caretPosition ) + 2; i++){
-            text += i + System.getProperty("line.separator");
+        StringBuilder text = new StringBuilder(50);
+        for(int i = 1; i < root.getElementIndex( caretPosition ) + 2; i++){
+            if (metaglotistisListenerObj.errorLines.contains(i))
+                text.append('-');
+            else
+                text.append(' ');
+            text.append(i).append(System.getProperty("line.separator"));
         }
-        lines.setText(text);
+        lines.setText(text.toString());
 
 
         sourceTextTA.setFont(new Font("Courier New", Font.PLAIN, 20));

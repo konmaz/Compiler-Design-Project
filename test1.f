@@ -1,4 +1,4 @@
-integer x(g),z,i,j
+integer x(g),z,i,j,y
 string s,s_str_(10)
 data x/(5.:20.),(4.:-2.),(0.3:0.)/,z/.true./
 common /com1/i,j
