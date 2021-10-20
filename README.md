@@ -4,5 +4,3 @@ I developed the following project during the course [Programming Languages and C
 
 ![GUI Screenshot](img/GUI.png?raw=true "Title")
 
-
-<img src="img/GUI.png?raw=true" alt="drawing" width="700"/>
